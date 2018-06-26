@@ -2,19 +2,25 @@ package ttt
 
 const (
 	CellsPerSide = 3
-	BoardSize = CellsPerSide*CellsPerSide
-	Blank      = " "
-	Player1    = "X"
-	Player2    = "O"
-	NoOne = Blank
+	BoardSize 	 = CellsPerSide*CellsPerSide
+	Blank      	 = " "
+	Player1    	 = "X"
+	Player2    	 = "O"
+	NoOne 		 = Blank
 )
 
 type Player string
 
+type Strategy struct {
+	Player1 PlayerStrategy
+	Player2 PlayerStrategy
+}
+type PlayerStrategy func()
+
 type Game struct {
-	Board         [BoardSize]Player
+	Board		  [BoardSize]Player
 	CurrentPlayer Player
-	Winner Player
+	Winner 		  Player
 }
 
 func NewGame() *Game {
@@ -40,11 +46,9 @@ func (game *Game) mark(position int) *Game {
 }
 
 func (game *Game) isWonByCells(cell1, cell2, cell3 int) bool {
-	var isWon bool
 	if b := game.Board; b[cell1] != NoOne {
-		isWon = b[cell1] == b[cell2] && b[cell2] == b[cell3]
-	}
-	return isWon
+		return b[cell1] == b[cell2] && b[cell2] == b[cell3]
+	} else { return false }
 }
 
 func (game *Game) checkDiagonalWin() {
@@ -64,17 +68,23 @@ func (game *Game) checkRowWin() {
 }
 
 func (game *Game) checkColumnWin() {
-	col1Win := game.isWonByCells(0,3,6)
-	col2Win := game.isWonByCells(1,4,7)
-	col3Win := game.isWonByCells(2,5,8)
+	col1Win, col2Win, col3Win := game.isWonByCells(0,3,6), game.isWonByCells(1,4,7), game.isWonByCells(2,5,8)
 	if col1Win { game.Winner = game.Board[0]
 	} else if col2Win { game.Winner = game.Board[1]
 	} else if col3Win { game.Winner = game.Board[2] }
 }
 
-func (game *Game) winner() Player {
+func (game *Game) checkForWin() {
 	game.checkDiagonalWin()
 	game.checkRowWin()
 	game.checkColumnWin()
-	return game.Winner;
+}
+
+func (game *Game) boardFull() bool {
+	for _, a := range game.Board {
+		if a == Blank {
+			return false
+		}
+	}
+	return true
 }
