@@ -1,7 +1,6 @@
 package game
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -44,7 +43,7 @@ func WinTest(t *testing.T, howWon string, area string, winningPlayer Piece) {
 	if w != winningPlayer {
 		t.Errorf("Expected %v %v win by %v, to return %s,\n got: %v", howWon, area, winningPlayer, winningPlayer, w)
 	} else {
-		fmt.Printf("Passed win detection in %v %v with %v Piece\n", howWon, area, winningPlayer)
+		t.Logf("Passed win detection in %v %v with %v Piece\n", howWon, area, winningPlayer)
 	}
 }
 

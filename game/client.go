@@ -6,24 +6,24 @@ import (
 	"strings"
 )
 
-const NewLine = '\n'
+const ToLineEnding = '\n'
 
 type Client interface {
 	Send(string)
 	Receive() string
 }
 
-type TestIO struct {
+type StubIO struct {
 	Reply    string
 	Sent     string
 	LastRead string
 }
 
-func (client *TestIO) Send(msg string) {
+func (client *StubIO) Send(msg string) {
 	client.Sent = msg
 }
 
-func (client *TestIO) Receive() string {
+func (client *StubIO) Receive() string {
 	client.LastRead = client.Reply
 	return client.LastRead
 }
@@ -39,7 +39,7 @@ func (client *StdIO) Send(msg string) {
 
 func (client *StdIO) Receive() string {
 	StdIn := bufio.NewReader(os.Stdin)
-	received, _ := StdIn.ReadString(NewLine)
-	client.LastRead = strings.Replace(received, "\n", "", -1)
+	received, _ := StdIn.ReadString(ToLineEnding)
+	client.LastRead = strings.Replace(received, "", "", -1)
 	return client.LastRead
 }

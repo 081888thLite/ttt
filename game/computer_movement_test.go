@@ -5,7 +5,7 @@ import (
 )
 
 func TestEasyComputerGetMove(t *testing.T) {
-	client := &TestIO{
+	client := &StubIO{
 		Reply:    "",
 		Sent:     "",
 		LastRead: "",

@@ -6,8 +6,6 @@ import (
 
 const PromptForMove = "To make a move, enter a number corresponding to an open board position and press 'return':"
 
-//TODO: var Output = bufio.NewWriter(default to os.Stdout, but make this configurable for testing to capture output)
-
 type Human struct{}
 
 func (human Human) getMove(ui Client, board Board) int {
