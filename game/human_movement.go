@@ -11,8 +11,8 @@ type Human struct{}
 
 func (human Human) GetMove(ui Client, board Board) int {
 	ui.Write(PromptForMove)
-	entered := ui.Read()
-	move, _ := strconv.Atoi(entered)
+	ui.Read()
+	move, _ := strconv.Atoi(ui.GetLastRead())
 	if move < 0 || move > len(board) {
 		fmt.Errorf(`The move you picked: %v,\n Was out of this world! Literally!\n Try again, and GO for a number
 					that correlates to the open positions on the board.`, move)

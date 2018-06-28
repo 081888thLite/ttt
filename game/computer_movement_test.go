@@ -5,11 +5,7 @@ import (
 )
 
 func TestEasyComputerGetMove(t *testing.T) {
-	client := &StubIO{
-		Reply:    "",
-		Sent:     "",
-		LastRead: "",
-	}
+	client := &StubClient{}
 	game := DefaultNewGame()
 	easyComputer := game.Players[0].Strategy
 	move := easyComputer.GetMove(client, game.Board)
