@@ -2,13 +2,26 @@ package game
 
 import (
 	"bufio"
-	"strings"
+	"fmt"
+	"os"
 )
 
 // Delimiter when reading in Strings... If you're having trouble reading
 // from StdIn, and your on a Windows machine you may have to account for
-// windows carriage return: '\r\n'
+// windows carriage return by the changing the value below to: '\r\n'
 const ToLineEnding = '\n'
+
+func Read(feed *os.File) string {
+	var msg string
+	if feed == nil {
+		feed = os.Stdin
+	}
+	_, err := fmt.Fscanf(feed, "%v", &msg)
+	if err != nil {
+		panic(err)
+	}
+	return msg
+}
 
 // Represents the endpoint terminal for Input and Output This could be
 // extended for non-local machine use i.e. implementing a Client whose
@@ -55,13 +68,6 @@ func (client *StdIO) Write(msg string) {
 	client.lastWrite = msg
 }
 
-func (client *StdIO) Read(messages ...string) string {
-	var received string
-	if len(messages) != 0 {
-		received = messages[0]
-	} else {
-		received, _ = client.Reader.ReadString(ToLineEnding)
-	}
-	client.lastRead = strings.Replace(received, "", "", -1)
-	return client.lastRead
+func (client *StdIO) Read() string {
+	return Read(os.Stdin)
 }

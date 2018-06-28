@@ -1,15 +1,34 @@
 package game
 
 import (
+	"io"
+	"io/ioutil"
 	"testing"
 )
 
-func TestStdIO_Read(t *testing.T) {
-	stdIO := StdIO{}
-	t.Log("#Read sets StdIO's lastRead field")
-	userInput := "Read Works"
-	stdIO.Read(userInput)
-	if stdIO.lastRead != "Read Works" {
-		t.Errorf("Read failed, expected 'Read Works',/n got: %v", stdIO.lastRead)
+func TestInput(t *testing.T) {
+	var (
+		userInput string
+	)
+	msg := "Received\n"
+	in, err := ioutil.TempFile("", "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer in.Close()
+
+	_, err = io.WriteString(in, msg)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	_, err = in.Seek(0, io.SeekStart)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	userInput = Read(in)
+	if userInput != "Received" {
+		t.Errorf("Expected %v,\n got: %v", msg, userInput)
 	}
 }
