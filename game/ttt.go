@@ -12,7 +12,7 @@ type Board []Piece
 //Types related to Players
 type Piece string
 type Strategy interface {
-	getMove(ui Client, board Board) int
+	GetMove(ui Client, board Board) int
 }
 
 //Core Types

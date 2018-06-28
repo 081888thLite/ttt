@@ -2,7 +2,7 @@ package game
 
 type Easy struct{}
 
-func (comp Easy) getMove(client Client, board Board) int {
+func (comp Easy) GetMove(client Client, board Board) int {
 	return comp.getEasyMove(board)
 }
 

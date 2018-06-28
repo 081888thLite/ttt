@@ -1,9 +1,9 @@
 package game
 
 import (
-	"strings"
 	"math"
 	"strconv"
+	"strings"
 )
 
 type View interface {
@@ -15,7 +15,7 @@ type View interface {
 	ofPlayerThinking(Player) string
 }
 
-type ConsoleView struct {}
+type ConsoleView struct{}
 
 func (view ConsoleView) ofBoard(b Board) string {
 	rowSize := math.Sqrt((float64(len(b))))
@@ -36,8 +36,8 @@ func (view ConsoleView) ofBoard(b Board) string {
 	return viewableBoard.String()
 }
 
-func (view ConsoleView) ofPrompt(string) string { return "" }
-func (view ConsoleView) ofMove(string) string { return "" }
-func (view ConsoleView) ofWinner(Game) string { return "" }
-func (view ConsoleView) ofDraw(Game) string { return "" }
-func (view ConsoleView) ofPlayerThinking(Player) string { return "" }
+func (view ConsoleView) ofPrompt(string) string           { return "" }
+func (view ConsoleView) ofMove(p Player, move int) string { return "" }
+func (view ConsoleView) ofWinner(Game) string             { return "" }
+func (view ConsoleView) ofDraw(Game) string               { return "" }
+func (view ConsoleView) ofPlayerThinking(Player) string   { return "" }
