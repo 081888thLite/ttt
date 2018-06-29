@@ -1,4 +1,4 @@
-package game
+package ttt
 
 import (
 	"testing"
@@ -8,6 +8,18 @@ const Player1, Player2 = "X", "O"
 
 func DefaultNewGame() *Game {
 	return NewGame(9, Player{Piece: "X", Strategy: &Easy{}}, Player{Piece: "O", Strategy: &Easy{}})
+}
+
+func FullBoard() Board {
+	b := NewBoard(9)
+	for i, _ := range b {
+		if i % 2 == 0 {
+			b[i] = "X"
+		} else {
+			b[i] = "O"
+		}
+	}
+	return b
 }
 
 func TestForDiagonalWins(t *testing.T) {

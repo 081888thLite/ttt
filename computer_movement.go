@@ -1,4 +1,4 @@
-package game
+package ttt
 
 type Easy struct{}
 

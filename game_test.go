@@ -1,4 +1,4 @@
-package game
+package ttt
 
 import (
 	"testing"
@@ -79,3 +79,16 @@ func TestBoardFull(t *testing.T) {
 		t.Errorf("Expected full board to return true,\n got: %v", whenFullResult)
 	}
 }
+
+//t.Log("Game.turn represents a single move cycle.")
+//game := DefaultNewGame()
+//firstPlayer := game.Players[0]
+//secondPlayer := game.Players[1]
+//game.Turn(firstPlayer, StubClient{}, ConsoleView{})
+//if game.CurrentPlayer != secondPlayer {
+//t.Errorf("Expected current player of %v after the first turn,\n got: %v", secondPlayer, game.CurrentPlayer)
+//}
+//game.Turn(secondPlayer, StubClient{}, ConsoleView{})
+//if game.CurrentPlayer != firstPlayer {
+//t.Errorf("Expected current player of %v after the second turn,\n got: %v", firstPlayer, game.CurrentPlayer)
+//}

@@ -1,4 +1,6 @@
-package game
+package ttt
+
+import "strconv"
 
 const (
 	Blank = " "
@@ -12,7 +14,7 @@ type Board []Piece
 //Types related to Players
 type Piece string
 type Strategy interface {
-	GetMove(ui Client, board Board) int
+	GetMove(client Client, board Board) int
 }
 
 //Core Types
@@ -26,20 +28,24 @@ type Game struct {
 	CurrentPlayer Player
 	Winner        Piece
 	Players       [2]Player
-	UI            Client
 }
 
 func NewGame(boardSize BoardSize, player1 Player, player2 Player) *Game {
-	var b Board
-	for i := 0; i < int(boardSize); i++ {
-		b = append(b, Blank)
-	}
+	b := NewBoard(boardSize)
 	return &Game{
 		Board:         b,
 		Players:       [2]Player{player1, player2},
 		CurrentPlayer: player1,
 		Winner:        NoOne,
 	}
+}
+
+func NewBoard(boardSize BoardSize) Board {
+	var b Board
+	for i := 0; i < int(boardSize); i++ {
+		b = append(b, Blank)
+	}
+	return b
 }
 
 func (game *Game) setPlayers(player1 Player, player2 Player) *Game {
@@ -115,4 +121,42 @@ func (game *Game) boardFull() bool {
 		}
 	}
 	return true
+}
+func (game *Game) Play() {
+	mainClient := Sys{}
+	display := ConsoleView{}
+	mainClient.Write("WELCOME TO TICTACTOE\nwrote in Go")
+	mainClient.Write(display.ofBoard(game.Board))
+	turn := Turn{}
+	for !over(game) {
+		takeTurn(turn, mainClient, display, game)
+		game.CheckForWin()
+		game.switchPlayers()
+	}
+	switch {
+	case game.Winner != NoOne:
+		mainClient.Write("Game Won By:\n")
+		mainClient.Write(string(game.Winner))
+		mainClient.Write("\n")
+		break
+	case game.boardFull():
+		mainClient.Write("Game Ends in Draw!\n")
+		mainClient.Write("\n")
+		break
+	}
+}
+
+func over(game *Game) bool {
+	return game.Winner != NoOne || game.boardFull()
+}
+
+func takeTurn(turn Turn, mainClient Sys, display ConsoleView, game *Game) {
+	turn.displayBoard(&mainClient, display, game.Board)
+	turn.promptForMove(&mainClient, display, game.CurrentPlayer)
+	turn.receiveMove(&mainClient, game.CurrentPlayer, game.Board)
+	turn.validateMove(&mainClient, game.Board)
+	if turn.Complete() {
+		move, _ := strconv.Atoi(mainClient.GetLastRead())
+		game.mark(move)
+	}
 }
