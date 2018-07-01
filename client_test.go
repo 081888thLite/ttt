@@ -314,9 +314,9 @@ func TestSys_GetLastSent(t *testing.T) {
 		want   string
 	}{
 		{
-			name: "Returns LastWrote to stdOut",
+			name:   "Returns LastWrote to stdOut",
 			fields: fields{MsgStatus{"LastWrote", nil}, MsgStatus{"", nil}},
-			want: "LastWrote",
+			want:   "LastWrote",
 		},
 	}
 	for _, tt := range tests {
@@ -343,9 +343,9 @@ func TestStubClient_GetLastSent(t *testing.T) {
 		want   string
 	}{
 		{
-			name: "Returns whatever is in the LastSent field",
+			name:   "Returns whatever is in the LastSent field",
 			fields: fields{MsgStatus{"LastSent", nil}, MsgStatus{"LastRead", nil}},
-			want: "LastSent",
+			want:   "LastSent",
 		},
 	}
 	for _, tt := range tests {

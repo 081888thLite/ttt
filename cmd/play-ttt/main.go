@@ -1,9 +1,13 @@
 package main
 
-import . "github.com/081888thLite/ttt"
+import (
+	"fmt"
+	. "github.com/081888thLite/ttt"
+)
 
 func main() {
-	g := Game{}
-	Configure()
+	c := *Configure()
+	fmt.Printf("%T with players of type %T & %T", c, c.Players[0], c.Players[1])
+	g := *NewGame(c)
 	g.Play()
 }

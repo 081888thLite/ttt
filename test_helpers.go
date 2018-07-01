@@ -7,13 +7,15 @@ import (
 const Player1, Player2 = "X", "O"
 
 func DefaultNewGame() *Game {
-	return NewGame(9, &Human{Piece: "X", Client: &Sys{}}, &Human{Piece: "O", Client: &Sys{}})
+	players := [2]Player{&Human{Piece: "X", Client: &Sys{}}, &Human{Piece: "O", Client: &Sys{}}}
+	c := Configuration{Players: players}
+	return NewGame(c)
 }
 
 func FullBoard() Board {
 	b := NewBoard(9)
 	for i, _ := range b {
-		if i % 2 == 0 {
+		if i%2 == 0 {
 			b[i] = "X"
 		} else {
 			b[i] = "O"

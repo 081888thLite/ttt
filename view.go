@@ -18,7 +18,7 @@ type View interface {
 	ofPlayerThinking(Player) string
 }
 
-type Console struct{
+type Console struct {
 	UI Sys
 }
 
@@ -59,19 +59,66 @@ func (display *Console) greeting() {
 func (display *Console) Write(msg string) {
 	display.UI.Write(msg)
 }
-func (display *Console) PlayerOptions() {
-	display.Write("\nSet the game mode by entering one of the following options and pressing 'return':\n")
-	display.Write("\nEnter 1 For Human vs Human Mode")
-	display.Write("\nEnter 2 For Human vs Computer Mode")
-	display.Write("\nEnter 3 For Computer vs Computer Mode")
+func (display *Console) GameMenu() {
+	display.Write("\n**Game Menu**\n")
 }
-func (display *Console) GetMode() Mode {
+
+func (display *Console) PlayerMenu(i int) (Strategy, Piece) {
+	display.Write("\nPlayer Menu\n")
+	display.Write("______________\n")
+	display.Write("NOTE: Unless you want this menu to keep resetting,\n")
+	display.Write("enter a single character and press return for all options\n\n")
+	strategy := display.PickStrategy(i)
+	piece := display.PickPiece(i)
+	return strategy, piece
+}
+
+func (display *Console) PickPiece(order int) Piece {
+	display.Write("\nWhat do you want Player ")
+	display.Write(strconv.Itoa(order + 1))
+	display.Write(" to mark the board with?\n")
+	display.Write(":")
 	display.UI.Read()
-	choice := display.UI.LastRead.Msg
-	setting, _ := strconv.Atoi(choice)
-	return Mode(setting)
+	choice := display.UI.GetLastRead()
+	return Piece(choice)
+}
+
+func (display *Console) PickStrategy(order int) Strategy {
+	display.Write("\nWhat kind of Mover is Player ")
+	display.Write(strconv.Itoa(order + 1))
+	display.Write("?\nEnter...")
+	display.Write("\n1 for HUMAN\n")
+	display.Write("2 for EASY Difficulty AI\n")
+	display.Write("3 for MEDIUM Difficulty AI\n")
+	display.Write("4 for HARD Difficulty AI\n")
+	display.Write(":")
+	display.UI.Read()
+	choice, err := strconv.Atoi(display.UI.GetLastRead())
+	if choice < 1 || choice > 4 || err != nil {
+		display.Write("***YOUR ENTERED SOMETHING WRONG***\n***CHECK INPUT AND TRY AGAIN***")
+		return display.PickStrategy(order)
+	}
+	return Strategy(choice)
+}
+
+func (display *Console) WantsSetup() bool {
+	display.Write("\n**Want to configure the players?**\n")
+	display.Write("DEFAULT PLAYERS: Human w/ Piece of X vs. HardComputer w/ Piece of O")
+	display.Write("\nEnter y and press 'return' to setup the players")
+	display.Write("\nEnter n and press 'return' to skip and use defaults\n")
+	display.Write(":")
+	display.UI.Read()
+	choice := display.UI.GetLastRead()
+	return strings.ToLower(choice) == "y"
 }
 
 func NewConsole() *Console {
 	return &Console{UI: Sys{}}
+}
+func (display *Console) getHumanMove() int {
+	display.Write("To make a move, enter a number corresponding\n")
+	display.Write("to an open board position and press 'return':\n")
+	display.UI.Read()
+	choice, _ := strconv.Atoi(display.UI.GetLastRead())
+	return choice
 }

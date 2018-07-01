@@ -85,7 +85,7 @@ func TestGame_setPlayers(t *testing.T) {
 	game = game.setPlayers(Easy{"S", &StubClient{}}, Easy{"P", &StubClient{}})
 	player1Piece := game.Players[0].GetPiece()
 	player2Piece := game.Players[1].GetPiece()
-	if  player1Piece != "S" && player2Piece != "P" {
+	if player1Piece != "S" && player2Piece != "P" {
 		t.Errorf("Expected player pieces to be set to:\n'S' & 'P'\n got: \n%v & %v ", player1Piece, player2Piece)
 
 	}
@@ -94,7 +94,7 @@ func TestGame_setPlayers(t *testing.T) {
 func TestGame_Play(t *testing.T) {
 	p1 := Easy{}
 	p2 := Easy{}
-	players := [2]Player{p1,p2}
+	players := [2]Player{p1, p2}
 	type fields struct {
 		Board         Board
 		CurrentPlayer Player
@@ -108,10 +108,10 @@ func TestGame_Play(t *testing.T) {
 		{
 			name: "Play runs ok",
 			fields: fields{
-				Board: FullBoard(),
+				Board:         FullBoard(),
 				CurrentPlayer: p1,
-				Players: players,
-				Winner: NoOne,
+				Players:       players,
+				Winner:        NoOne,
 			},
 		},
 	}
@@ -122,7 +122,7 @@ func TestGame_Play(t *testing.T) {
 				CurrentPlayer: tt.fields.CurrentPlayer,
 				Winner:        tt.fields.Winner,
 				Players:       tt.fields.Players,
-				Display: 	   &Console{},
+				Display:       &Console{},
 			}
 			game.Play()
 		})
@@ -131,27 +131,27 @@ func TestGame_Play(t *testing.T) {
 
 func TestGame_turn(t *testing.T) {
 	type args struct {
-		givenBoard Board
+		givenBoard    Board
 		currentPlayer Player
-		shouldTake int
+		shouldTake    int
 	}
 	tests := []struct {
 		name string
 		args args
 	}{
-		{name: "Easy computer", args: args{NewBoard(9),&Easy{Piece: "X"},0}},
+		{name: "Easy computer", args: args{NewBoard(9), &Easy{Piece: "X"}, 0}},
 		{name: "Easy computer",
-		 args: args{Board{"X", Blank, Blank, Blank, Blank, Blank, Blank, Blank, Blank},&Easy{Piece: "O"},1}},
+			args: args{Board{"X", Blank, Blank, Blank, Blank, Blank, Blank, Blank, Blank}, &Easy{Piece: "O"}, 1}},
 		{name: "Easy computer",
-		 args: args{Board{"X", "O", Blank, Blank, Blank, Blank, Blank, Blank, Blank},&Easy{Piece: "X"},2}},
+			args: args{Board{"X", "O", Blank, Blank, Blank, Blank, Blank, Blank, Blank}, &Easy{Piece: "X"}, 2}},
 		{name: "Easy computer",
-			args: args{Board{"X", "O", Blank, "X", Blank, Blank, Blank, Blank, Blank},&Easy{Piece: "O"},2}},
+			args: args{Board{"X", "O", Blank, "X", Blank, Blank, Blank, Blank, Blank}, &Easy{Piece: "O"}, 2}},
 		{name: "Medium computer",
-			args: args{Board{"X", "O", Blank, "X", "O", Blank, Blank, Blank, Blank},&Medium{Piece: "X"},6}},
+			args: args{Board{"X", "O", Blank, "X", "O", Blank, Blank, Blank, Blank}, &Medium{Piece: "X"}, 6}},
 		{name: "Medium computer",
-			args: args{Board{"X", "O", Blank, "X", "O", Blank, Blank, Blank, Blank},&Medium{Piece: "O"},7}},
+			args: args{Board{"X", "O", Blank, "X", "O", Blank, Blank, Blank, Blank}, &Medium{Piece: "O"}, 7}},
 		{name: "Medium computer",
-			args: args{Board{"X", "O", Blank, Blank, "O", Blank, Blank, Blank, Blank},&Medium{Piece: "X"},2}},
+			args: args{Board{"X", "O", Blank, Blank, "O", Blank, Blank, Blank, Blank}, &Medium{Piece: "X"}, 2}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -162,7 +162,7 @@ func TestGame_turn(t *testing.T) {
 			if game.Board[tt.args.shouldTake] != tt.args.currentPlayer.GetPiece() {
 				e := "\nGiven board:\n %v\n%v player %v\nShould take position:\n%v\nbut board looks like:\n%v\n"
 				t.Fail()
-				t.Errorf(e, given, tt.name , tt.args.currentPlayer, tt.args.shouldTake, game.Board)
+				t.Errorf(e, given, tt.name, tt.args.currentPlayer, tt.args.shouldTake, game.Board)
 			} else {
 				l := "%v player %v, took: %v\n"
 				t.Logf(l, tt.name, tt.args.currentPlayer, tt.args.shouldTake)

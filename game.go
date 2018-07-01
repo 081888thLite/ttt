@@ -28,14 +28,15 @@ type Game struct {
 	Display       *Console
 }
 
-func NewGame(boardSize BoardSize, player1 Player, player2 Player) *Game {
-	b := NewBoard(boardSize)
+func NewGame(c Configuration) *Game {
+	b := NewBoard(9)
+	p := c.Players
 	return &Game{
 		Board:         b,
-		Players:       [2]Player{player1, player2},
-		CurrentPlayer: player1,
+		Players:       p,
+		CurrentPlayer: p[0],
 		Winner:        NoOne,
-		Display:	   NewConsole(),
+		Display:       NewConsole(),
 	}
 }
 
@@ -95,7 +96,7 @@ func (b Board) blanks() []int {
 func (b Board) wonBy() Piece {
 	for _, cells := range WinConditions {
 		possibleWinner := b[cells[0]]
-		if  possibleWinner != NoOne && b.allCellsMatch(cells...) {
+		if possibleWinner != NoOne && b.allCellsMatch(cells...) {
 			return possibleWinner
 		}
 	}
@@ -117,13 +118,14 @@ func (game *Game) boardFull() bool {
 func (game *Game) Play() {
 	game.Display.greeting()
 	for !over(game) {
-		game.turn()
+		game = game.turn()
 	}
 	switch {
 	case game.Winner != NoOne:
 		game.Display.Write("Game Won By:\n")
 		game.Display.Write(string(game.Winner))
 		game.Display.Write("\n")
+		game.Display.Board(game.Board)
 		break
 	case game.boardFull():
 		game.Display.Write("Game Ends in Draw!\n")
@@ -132,11 +134,12 @@ func (game *Game) Play() {
 	}
 }
 
-func (game *Game) turn() {
+func (game *Game) turn() *Game {
 	game.Display.Board(game.Board)
 	game.mark(game.CurrentPlayer.GetMove(game.Board))
 	game.CheckForWin()
 	game.switchPlayers()
+	return game
 }
 
 func over(game *Game) bool {
