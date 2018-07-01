@@ -44,7 +44,7 @@ func (comp Hard) GetPiece() Piece {
 }
 
 func (comp Hard) GetMove(board Board) int {
-	return 0
+	return board.blanks()[0]
 }
 
 type Human struct {
