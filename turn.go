@@ -25,7 +25,7 @@ func (turn *Turn) promptForMove(client Client, view View, player Player) {
 
 func (turn *Turn) receiveMove(client Client, player Player, board Board) {
 	client.Read()
-	player.Strategy.GetMove(client, board)
+	player.GetMove(board)
 	turn.ReceivedMove = true
 }
 
@@ -42,3 +42,13 @@ func (turn Turn) Complete() bool {
 	return turn == CompletedTurn
 }
 
+//func takeTurn(turn Turn, mainClient Sys, display Console, game *Game) {
+//	turn.displayBoard(&mainClient, display, game.Board)
+//	turn.promptForMove(&mainClient, display, game.CurrentPlayer)
+//	turn.receiveMove(&mainClient, game.CurrentPlayer, game.Board)
+//	turn.validateMove(&mainClient, game.Board)
+//	if turn.Complete() {
+//		move, _ := strconv.Atoi(mainClient.GetLastRead())
+//		game.mark(move)
+//	}
+//}

@@ -1,11 +1,11 @@
 package ttt
 
-import "strconv"
-
 const (
 	Blank = " "
 	NoOne = Blank
 )
+
+var WinConditions = [][]int{{0, 1, 2}, {3, 4, 5}, {6, 7, 8}, {0, 3, 6}, {1, 4, 7}, {2, 5, 8}, {0, 4, 8}, {6, 4, 2}}
 
 //Types related to the Board
 type BoardSize int
@@ -13,14 +13,11 @@ type Board []Piece
 
 //Types related to Players
 type Piece string
-type Strategy interface {
-	GetMove(client Client, board Board) int
-}
 
 //Core Types
-type Player struct {
-	Piece    Piece
-	Strategy Strategy
+type Player interface {
+	GetMove(board Board) int
+	GetPiece() Piece
 }
 
 type Game struct {
@@ -28,6 +25,7 @@ type Game struct {
 	CurrentPlayer Player
 	Winner        Piece
 	Players       [2]Player
+	Display       *Console
 }
 
 func NewGame(boardSize BoardSize, player1 Player, player2 Player) *Game {
@@ -37,6 +35,7 @@ func NewGame(boardSize BoardSize, player1 Player, player2 Player) *Game {
 		Players:       [2]Player{player1, player2},
 		CurrentPlayer: player1,
 		Winner:        NoOne,
+		Display:	   NewConsole(),
 	}
 }
 
@@ -62,56 +61,49 @@ func (game *Game) switchPlayers() *Game {
 	return game
 }
 
-func (game *Game) mark(position int) *Game {
-	if game.Board[position] == Blank {
-		game.Board[position] = game.CurrentPlayer.Piece
+func (board Board) Mark(position int, piece Piece) Board {
+	if board[position] == Blank {
+		board[position] = piece
 	}
+	return board
+}
+
+func (game *Game) mark(position int) *Game {
+	game.Board = game.Board.Mark(position, game.CurrentPlayer.GetPiece())
 	return game
 }
 
-func (game *Game) wonBy(cell1, cell2, cell3 int) bool {
-	if b := game.Board; b[cell1] != NoOne {
-		return b[cell1] == b[cell2] && b[cell2] == b[cell3]
-	} else {
-		return false
+func (b Board) allCellsMatch(cells ...int) bool {
+	for _, cell := range cells {
+		if b[cell] != b[cells[0]] {
+			return false
+		}
 	}
+	return true
 }
 
-func (game *Game) checkDiagonalWin() {
-	leftToRightWin, rightToLeftWin := game.wonBy(0, 4, 8), game.wonBy(6, 4, 2)
-	if leftToRightWin {
-		game.Winner = game.Board[0]
-	} else if rightToLeftWin {
-		game.Winner = game.Board[6]
+func (b Board) blanks() []int {
+	blanks := []int{}
+	for i, e := range b {
+		if e == Blank {
+			blanks = append(blanks, i)
+		}
 	}
+	return blanks
 }
 
-func (game *Game) checkRowWin() {
-	row1Win, row2Win, row3Win := game.wonBy(0, 1, 2), game.wonBy(3, 4, 5), game.wonBy(6, 7, 8)
-	if row1Win {
-		game.Winner = game.Board[0]
-	} else if row2Win {
-		game.Winner = game.Board[3]
-	} else if row3Win {
-		game.Winner = game.Board[6]
+func (b Board) wonBy() Piece {
+	for _, cells := range WinConditions {
+		possibleWinner := b[cells[0]]
+		if  possibleWinner != NoOne && b.allCellsMatch(cells...) {
+			return possibleWinner
+		}
 	}
-}
-
-func (game *Game) checkColumnWin() {
-	col1Win, col2Win, col3Win := game.wonBy(0, 3, 6), game.wonBy(1, 4, 7), game.wonBy(2, 5, 8)
-	if col1Win {
-		game.Winner = game.Board[0]
-	} else if col2Win {
-		game.Winner = game.Board[1]
-	} else if col3Win {
-		game.Winner = game.Board[2]
-	}
+	return NoOne
 }
 
 func (game *Game) CheckForWin() {
-	game.checkDiagonalWin()
-	game.checkRowWin()
-	game.checkColumnWin()
+	game.Winner = game.Board.wonBy()
 }
 
 func (game *Game) boardFull() bool {
@@ -123,40 +115,30 @@ func (game *Game) boardFull() bool {
 	return true
 }
 func (game *Game) Play() {
-	mainClient := Sys{}
-	display := ConsoleView{}
-	mainClient.Write("WELCOME TO TICTACTOE\nwrote in Go")
-	mainClient.Write(display.ofBoard(game.Board))
-	turn := Turn{}
+	game.Display.greeting()
 	for !over(game) {
-		takeTurn(turn, mainClient, display, game)
-		game.CheckForWin()
-		game.switchPlayers()
+		game.turn()
 	}
 	switch {
 	case game.Winner != NoOne:
-		mainClient.Write("Game Won By:\n")
-		mainClient.Write(string(game.Winner))
-		mainClient.Write("\n")
+		game.Display.Write("Game Won By:\n")
+		game.Display.Write(string(game.Winner))
+		game.Display.Write("\n")
 		break
 	case game.boardFull():
-		mainClient.Write("Game Ends in Draw!\n")
-		mainClient.Write("\n")
+		game.Display.Write("Game Ends in Draw!\n")
+		game.Display.Write("\n")
 		break
 	}
+}
+
+func (game *Game) turn() {
+	game.Display.Board(game.Board)
+	game.mark(game.CurrentPlayer.GetMove(game.Board))
+	game.CheckForWin()
+	game.switchPlayers()
 }
 
 func over(game *Game) bool {
 	return game.Winner != NoOne || game.boardFull()
-}
-
-func takeTurn(turn Turn, mainClient Sys, display ConsoleView, game *Game) {
-	turn.displayBoard(&mainClient, display, game.Board)
-	turn.promptForMove(&mainClient, display, game.CurrentPlayer)
-	turn.receiveMove(&mainClient, game.CurrentPlayer, game.Board)
-	turn.validateMove(&mainClient, game.Board)
-	if turn.Complete() {
-		move, _ := strconv.Atoi(mainClient.GetLastRead())
-		game.mark(move)
-	}
 }

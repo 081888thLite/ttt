@@ -40,8 +40,7 @@ type Sys struct {
 }
 
 func (client *Sys) Write(msg string) {
-	sent, err := seed(os.Stdout, msg)
-	client.LastWrote = MsgStatus{sent, err}
+	seed(os.Stdout, msg)
 }
 
 func (client *Sys) Read() {

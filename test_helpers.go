@@ -7,7 +7,7 @@ import (
 const Player1, Player2 = "X", "O"
 
 func DefaultNewGame() *Game {
-	return NewGame(9, Player{Piece: "X", Strategy: &Easy{}}, Player{Piece: "O", Strategy: &Easy{}})
+	return NewGame(9, &Human{Piece: "X", Client: &Sys{}}, &Human{Piece: "O", Client: &Sys{}})
 }
 
 func FullBoard() Board {

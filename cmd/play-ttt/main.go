@@ -1,9 +1,9 @@
 package main
 
-import (
-	. "github.com/081888thLite/ttt"
-)
+import . "github.com/081888thLite/ttt"
 
 func main() {
-	DefaultNewGame().Play()
+	g := Game{}
+	Configure()
+	g.Play()
 }
