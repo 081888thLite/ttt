@@ -4,16 +4,17 @@ import (
 	"testing"
 )
 
-func TestNewGame(t *testing.T) {
-	defaultNewGame := DefaultNewGame()
-	if len(defaultNewGame.Board) != 9 {
-		t.Errorf("Expected default board size to be: 9,\n got: %v", len(defaultNewGame.Board))
+func TestNewBoard(t *testing.T) {
+	if len(DefaultNewGame().Board) != 9 {
+		t.Errorf("Expected default board size to be: 9,\n got: %v", len(DefaultNewGame().Board))
 	}
-	game := NewGame(25, Easy{"1", &StubClient{}}, Easy{"2", &StubClient{}})
-	if len(game.Board) != 25 {
-		t.Errorf("Expected default board size to be: 9,\n got: %v", len(game.Board))
+	g := NewGame(Configuration{})
+	b := NewBoard(25)
+	size := len(b)
+	if size != 25 {
+		t.Errorf("Expected default board size to be: 25,\n got: %v", size)
 	}
-	for _, field := range game.Board {
+	for _, field := range g.Board {
 		if field != " " {
 			t.Errorf("Expected fields with Blank (\" \") values,\n got: %v", field)
 		}

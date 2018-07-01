@@ -25,7 +25,7 @@ func (strategy Strategy) setPlayer(piece Piece) Player {
 		&Medium{Piece: piece},
 		&Hard{Piece: piece},
 	}
-	player := players[strategy+1]
+	player := players[strategy-1]
 	return player
 }
 

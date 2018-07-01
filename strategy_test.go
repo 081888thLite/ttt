@@ -5,7 +5,7 @@ import (
 )
 
 func TestEasyComputerGetMove(t *testing.T) {
-	game := NewGame(&Configuration{})
+	game := NewGame(Configuration{Players: [2]Player{EASY.setPlayer("e"), EASY.setPlayer("z")}})
 	easyComputer := game.Players[0]
 	move := easyComputer.GetMove(game.Board)
 	if move != 0 {
