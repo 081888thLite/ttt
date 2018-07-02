@@ -47,8 +47,8 @@ func TestStrategy_setPlayer(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.strategy.setPlayer(tt.args.piece); got == tt.want {
-				t.Errorf("Strategy.setPlayer() = %v, want %v", got, tt.want)
+			if got := tt.strategy.getPlayer(tt.args.piece); got == tt.want {
+				t.Errorf("Strategy.getPlayer() = %v, want %v", got, tt.want)
 			}
 		})
 	}

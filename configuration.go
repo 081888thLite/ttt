@@ -18,7 +18,7 @@ type Configuration struct {
 }
 type Strategy int
 
-func (strategy Strategy) setPlayer(piece Piece) Player {
+func (strategy Strategy) getPlayer(piece Piece) Player {
 	players := [...]Player{
 		&Human{Piece: piece},
 		&Easy{Piece: piece},
@@ -37,7 +37,7 @@ func Configure() *Configuration {
 	if v.WantsSetup() {
 		for i, _ := range setPlayers {
 			strategy, piece := v.PlayerMenu(i)
-			setPlayers[i] = strategy.setPlayer(piece)
+			setPlayers[i] = strategy.getPlayer(piece)
 		}
 	} else {
 		setPlayers = DefaultPlayers
