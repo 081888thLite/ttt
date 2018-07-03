@@ -18,7 +18,7 @@ func (mm *Minimax) SetCaller(comp Hard) {
 
 func (mm *Minimax) Score(board Board) int {
 
-	var winner= board.wonBy()
+	var winner = board.wonBy()
 	//log.Printf("Which was a win, making the WINNER %v\n", winner)
 	switch winner {
 	case mm.caller:
