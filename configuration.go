@@ -7,7 +7,7 @@ const (
 	HARD
 )
 
-var DefaultPlayers = [2]Player{&Human{"X", &Sys{}}, &Medium{"O",&Sys{}}}
+var DefaultPlayers = [2]Player{&Human{"X", &Sys{}}, &Hard{"O", &StubClient{}}}
 
 //Todo:
 //var DefaultPlayers = [2]Player{&Human{"X", &Sys{}}, &Hard{"O", &StubClient{}}}
@@ -22,7 +22,7 @@ func (strategy Strategy) create(piece Piece) *Player {
 	players := [...]Player{
 		&Human{piece, &Sys{}},
 		&Easy{piece, &StubClient{}},
-		&Medium{piece,&StubClient{}},
+		&Medium{piece, &StubClient{}},
 		&Hard{piece, &StubClient{}},
 	}
 	player := players[strategy-1]
