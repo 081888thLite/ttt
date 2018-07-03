@@ -9,15 +9,6 @@ import (
 const MoveError = `The move you picked: %v,\nWas out of this world! Literally!\n Try again, and GO for a number
 that correlates to the open positions on the board.`
 
-type View interface {
-	ofBoard(Board) string
-	ofPrompt(Player) string
-	ofMove(string) string
-	ofWinner(Game) string
-	ofDraw() string
-	ofPlayerThinking(Player) string
-}
-
 type Console struct {
 	UI Sys
 }
@@ -47,11 +38,6 @@ func (display *Console) Board(board Board) {
 	display.Write(printableBoard)
 }
 
-func (display *Console) ofPrompt(Player) string         { return "" }
-func (display *Console) ofMove(string) string           { return "" }
-func (display *Console) ofWinner(Game) string           { return "" }
-func (display *Console) ofDraw() string                 { return "" }
-func (display *Console) ofPlayerThinking(Player) string { return "" }
 func (display *Console) greeting() {
 	display.Write("\nWELCOME TO TICTACTOE\nwrote in Go")
 }
@@ -103,7 +89,7 @@ func (display *Console) PickStrategy(order int) Strategy {
 
 func (display *Console) WantsSetup() bool {
 	display.Write("\n**Want to configure the players?**\n")
-	display.Write("DEFAULT PLAYERS: Human w/ Piece of X vs. HardComputer w/ Piece of O")
+	display.Write("DEFAULT PLAYERS: Human w/ piece of X vs. HardComputer w/ piece of O")
 	display.Write("\nEnter y and press 'return' to setup the players")
 	display.Write("\nEnter n and press 'return' to skip and use defaults\n")
 	display.Write(":")

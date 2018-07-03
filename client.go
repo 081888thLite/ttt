@@ -5,13 +5,6 @@ import (
 	"os"
 )
 
-type Client interface {
-	Write(string)
-	Read()
-	GetLastSent() string
-	GetLastRead() string
-}
-
 type MsgStatus struct {
 	Msg string
 	Err error

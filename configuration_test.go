@@ -42,7 +42,7 @@ func TestStrategy_setPlayer(t *testing.T) {
 			name:     "returns a Human Player",
 			strategy: HUMAN,
 			args:     args{piece: "x"},
-			want:     &Human{Piece: "X"},
+			want:     &Human{piece: "X"},
 		},
 	}
 	for _, tt := range tests {

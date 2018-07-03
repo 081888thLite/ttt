@@ -6,7 +6,7 @@ import (
 )
 
 func Test_score(t *testing.T) {
-	firstCaller := Hard{Piece: X}
+	firstCaller := Hard{piece: X}
 	b := []Piece{X, Blank, Blank, O, X, Blank, O, Blank, X}
 	mm := Minimax{}
 	mm.SetCaller(firstCaller)
@@ -14,7 +14,7 @@ func Test_score(t *testing.T) {
 	if firstCallerWin != 10 {
 		t.Errorf("Expected 10 when winner is caller,\n got: %v", firstCallerWin)
 	}
-	secondCaller := Hard{Piece: O}
+	secondCaller := Hard{piece: O}
 	mm.SetCaller(secondCaller)
 	notCallerWin := mm.Score(b)
 	if notCallerWin != -10 {
@@ -27,8 +27,8 @@ func Test_score(t *testing.T) {
 }
 
 func Test_minimax(t *testing.T) {
-	p1 := Hard{Piece: X}
-	p2 := Hard{Piece: O}
+	p1 := Hard{piece: X}
+	p2 := Hard{piece: O}
 	players := [2]Player{&p1, &p2}
 	b := NewBoard(9)
 	b.PlacePieces(X, 2, 3, 5)

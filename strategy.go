@@ -8,12 +8,12 @@ type Player interface {
 }
 
 type Easy struct {
-	Piece  Piece
+	piece  Piece
 	Client Client
 }
 
 func (comp *Easy) GetPiece() Piece {
-	return comp.Piece
+	return comp.piece
 }
 
 func (comp *Easy) GetMove(board Board, opp Player) int {
@@ -21,12 +21,12 @@ func (comp *Easy) GetMove(board Board, opp Player) int {
 }
 
 type Medium struct {
-	Piece  Piece
+	piece  Piece
 	Client Client
 }
 
 func (comp *Medium) GetPiece() Piece {
-	return comp.Piece
+	return comp.piece
 }
 
 func (comp *Medium) GetMove(board Board, opp Player) int {
@@ -34,12 +34,12 @@ func (comp *Medium) GetMove(board Board, opp Player) int {
 }
 
 type Hard struct {
-	Piece  Piece
+	piece  Piece
 	Client Client
 }
 
 func (comp *Hard) GetPiece() Piece {
-	return comp.Piece
+	return comp.piece
 }
 
 func (comp *Hard) GetMove(board Board, opp Player) int {
@@ -50,12 +50,12 @@ func (comp *Hard) GetMove(board Board, opp Player) int {
 }
 
 type Human struct {
-	Piece  Piece
+	piece  Piece
 	Client Client
 }
 
 func (human *Human) GetPiece() Piece {
-	return human.Piece
+	return human.piece
 }
 
 func (human *Human) GetMove(board Board, opp Player) int {

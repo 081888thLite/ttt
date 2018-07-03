@@ -13,29 +13,25 @@ type Node struct {
 }
 
 func (mm *Minimax) SetCaller(comp Hard) {
-	mm.caller = comp.Piece
+	mm.caller = comp.piece
 }
 
 func (mm *Minimax) Score(board Board) int {
 
 	var winner = board.wonBy()
-	//log.Printf("Which was a win, making the WINNER %v\n", winner)
 	switch winner {
 	case mm.caller:
-		//log.Printf("Me SO I GAVE 10")
 		return 10
 	case NoOne:
-		//log.Printf("NOONE SO I GAVE 0")
 		return 0
 	default:
-		//log.Printf("CALLER SO I GAVE 10")
 		return -10
 	}
 }
 
 func (mm *Minimax) minimax(newBoard Board, players [2]Player) int {
-	mm.min = players[0].GetPiece()
-	mm.max = players[1].GetPiece()
+	mm.max = players[0].GetPiece()
+	mm.min = players[1].GetPiece()
 
 	openings := newBoard.blanks()
 

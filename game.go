@@ -11,13 +11,21 @@ var WinConditions = [][]int{{0, 1, 2}, {3, 4, 5}, {6, 7, 8}, {0, 3, 6}, {1, 4, 7
 type BoardSize int
 type Board []Piece
 
+type Client interface {
+	Write(string)
+	Read()
+	GetLastSent() string
+	GetLastRead() string
+}
+
 type Game struct {
 	Board         Board
 	CurrentPlayer Player
 	Waiting       Player
 	Winner        Piece
 	Players       [2]Player
-	Display       *Console
+	Console       *Console
+	mv int
 }
 
 func NewGame(c Configuration) *Game {
@@ -28,7 +36,7 @@ func NewGame(c Configuration) *Game {
 		Players:       p,
 		CurrentPlayer: p[0],
 		Winner:        NoOne,
-		Display:       NewConsole(),
+		Console:       NewConsole(),
 	}
 }
 
@@ -40,20 +48,20 @@ func NewBoard(boardSize BoardSize) Board {
 	return b
 }
 
-func (game *Game) setPlayers(player1 Player, player2 Player) *Game {
-	game.Players = [2]Player{player1, player2}
-	return game
+func (g *Game) setPlayers(player1 Player, player2 Player) *Game {
+	g.Players = [2]Player{player1, player2}
+	return g
 }
 
-func (game *Game) switchPlayers() *Game {
-	if game.CurrentPlayer == game.Players[0] {
-		game.CurrentPlayer = game.Players[1]
-		game.Waiting = game.Players[0]
+func (g *Game) switchPlayers() *Game {
+	if g.CurrentPlayer == g.Players[0] {
+		g.CurrentPlayer = g.Players[1]
+		g.Waiting = g.Players[0]
 	} else {
-		game.CurrentPlayer = game.Players[0]
-		game.Waiting = game.Players[1]
+		g.CurrentPlayer = g.Players[0]
+		g.Waiting = g.Players[1]
 	}
-	return game
+	return g
 }
 
 func (board Board) Mark(position int, piece Piece) Board {
@@ -63,9 +71,9 @@ func (board Board) Mark(position int, piece Piece) Board {
 	return board
 }
 
-func (game *Game) mark(position int) *Game {
-	game.Board.Mark(position, game.CurrentPlayer.GetPiece())
-	return game
+func (g *Game) mark(i int) *Game {
+	g.Board.Mark(i, g.CurrentPlayer.GetPiece())
+	return g
 }
 
 func (b Board) allCellsMatch(cells ...int) bool {
@@ -97,45 +105,54 @@ func (b Board) wonBy() Piece {
 	return NoOne
 }
 
-func (game *Game) CheckForWin() {
-	game.Winner = game.Board.wonBy()
+func (g *Game) CheckForWin() {
+	g.Winner = g.Board.wonBy()
 }
 
-func (game *Game) boardFull() bool {
-	for _, a := range game.Board {
+func (g *Game) boardFull() bool {
+	for _, a := range g.Board {
 		if a == Blank {
 			return false
 		}
 	}
 	return true
 }
-func (game *Game) Play() {
-	game.Display.greeting()
-	for !over(game) {
-		game.turn()
+func (g *Game) Play() {
+	g.Console.greeting()
+	for !g.over() {
+		g.turn()
 	}
+	g.end()
+}
+
+func (g *Game) end() {
 	switch {
-	case game.Winner != NoOne:
-		game.Display.Write("Game Won By:\n")
-		game.Display.Write(string(game.Winner))
-		game.Display.Write("\n")
-		game.Display.Board(game.Board)
+	case g.Winner != NoOne:
+		g.Console.Write("Game Won By:\n")
+		g.Console.Write(string(g.Winner))
+		g.Console.Write("\n")
+		g.Console.Board(g.Board)
 		break
-	case game.boardFull():
-		game.Display.Write("Game Ends in Draw!\n")
-		game.Display.Write("\n")
+	case g.boardFull():
+		g.Console.Write("Game Ends in Draw!\n")
+		g.Console.Write("\n")
 		break
 	}
 }
 
-func (game *Game) turn() *Game {
-	game.Display.Board(game.Board)
-	game.mark(game.CurrentPlayer.GetMove(game.Board, game.Waiting))
-	game.CheckForWin()
-	game.switchPlayers()
-	return game
+func (g *Game) turn() *Game {
+	g.Console.Board(g.Board)
+	g.move()
+	g.mark(g.mv)
+	g.CheckForWin()
+	g.switchPlayers()
+	return g
 }
 
-func over(game *Game) bool {
-	return game.Winner != NoOne || game.boardFull()
+func (g *Game) move() {
+	g.mv = g.CurrentPlayer.GetMove(g.Board, g.Waiting)
+}
+
+func (g *Game) over() bool {
+	return g.Winner != NoOne || g.boardFull()
 }
