@@ -24,12 +24,12 @@ func TestNewBoard(t *testing.T) {
 func TestGame_switchPlayers(t *testing.T) {
 	game := DefaultNewGame()
 	if game.CurrentPlayer != game.Players[0] {
-		t.Errorf("Expected *Player1 (X),\n got: %v", game.CurrentPlayer)
+		t.Errorf("Expected *X (X),\n got: %v", game.CurrentPlayer)
 	}
 
 	game.switchPlayers()
 	if game.CurrentPlayer != game.Players[1] {
-		t.Errorf("Expected *Player2 (O),\n got: %v", game.CurrentPlayer)
+		t.Errorf("Expected *O (O),\n got: %v", game.CurrentPlayer)
 	}
 }
 
@@ -37,20 +37,20 @@ func TestGame_mark(t *testing.T) {
 	game := DefaultNewGame()
 	game.mark(4)
 	if game.Board[4] != game.Players[0].GetPiece() {
-		t.Errorf("Expected Blank value in center cell to become *Player1 (X) value,\n got: %v", game.Board[4])
+		t.Errorf("Expected Blank value in center cell to become *X (X) value,\n got: %v", game.Board[4])
 		t.Errorf("Perhaps the wrong cell was marked...\n here are the rest of the cell values: %v\n", game.Board)
 	}
 
 	game.switchPlayers()
 	game.mark(5)
 	if game.Board[5] != game.Players[1].GetPiece() {
-		t.Errorf("Expected Blank value in cell 5 (row~2 col~3) to become *Player2 (O) value,\n got: %v", game.Board[5])
+		t.Errorf("Expected Blank value in cell 5 (row~2 col~3) to become *O (O) value,\n got: %v", game.Board[5])
 	}
 
 	game.switchPlayers()
 	game.mark(5)
 	if game.Board[5] != game.Players[1].GetPiece() {
-		message := "Expected already marked *Player2 (O) value in cell 5 (row~2 col~3) to not change,\n got: %v"
+		message := "Expected already marked *O (O) value in cell 5 (row~2 col~3) to not change,\n got: %v"
 		t.Errorf(message, game.Board[5])
 	}
 }
@@ -68,13 +68,13 @@ func TestBoardFull(t *testing.T) {
 		t.Errorf("Expected empty board to return false,\n got: %v", whenEmptyResult)
 	}
 
-	game.Board = []Piece{Player1, Player2, Player2, Player2, Blank, Player1, Player1, Player1, Player2}
+	game.Board = []Piece{X, O, O, O, Blank, X, X, X, O}
 	whenInPlayResult := game.boardFull()
 	if whenInPlayResult != false {
 		t.Errorf("Expected in game board to return false,\n got: %v", whenInPlayResult)
 	}
 
-	game.Board = []Piece{Player1, Player2, Player2, Player2, Player1, Player1, Player1, Player1, Player2}
+	game.Board = []Piece{X, O, O, O, X, X, X, X, O}
 	whenFullResult := game.boardFull()
 	if whenFullResult != true {
 		t.Errorf("Expected full board to return true,\n got: %v", whenFullResult)

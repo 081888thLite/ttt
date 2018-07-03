@@ -8,8 +8,8 @@ type Player interface {
 }
 
 type Easy struct {
-	Piece    Piece
-	Client   Client
+	Piece  Piece
+	Client Client
 }
 
 func (comp *Easy) GetPiece() Piece {
@@ -34,8 +34,8 @@ func (comp *Medium) GetMove(board Board, opp Player) int {
 }
 
 type Hard struct {
-	Piece    Piece
-	Client   Client
+	Piece  Piece
+	Client Client
 }
 
 func (comp *Hard) GetPiece() Piece {
@@ -43,8 +43,9 @@ func (comp *Hard) GetPiece() Piece {
 }
 
 func (comp *Hard) GetMove(board Board, opp Player) int {
-	mm := new ( Minimax )
-	choice := mm.minimax(board[:], [2]Player{comp,opp})
+	mm := new(Minimax)
+	mm.SetCaller(*comp)
+	choice := mm.minimax(board, [2]Player{comp, opp})
 	return choice
 }
 

@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-const Player1, Player2 = "X", "O"
+const X, O = "X", "O"
 
 func DefaultNewGame() *Game {
 	players := [2]Player{&Human{Piece: "X", Client: &Sys{}}, &Human{Piece: "O", Client: &Sys{}}}
@@ -25,28 +25,28 @@ func FullBoard() Board {
 }
 
 func TestForDiagonalWins(t *testing.T) {
-	WinTest(t, "Diagonal", "LtR", Player1)
-	WinTest(t, "Diagonal", "LtR", Player2)
-	WinTest(t, "Diagonal", "RtL", Player1)
-	WinTest(t, "Diagonal", "RtL", Player2)
+	WinTest(t, "Diagonal", "LtR", X)
+	WinTest(t, "Diagonal", "LtR", O)
+	WinTest(t, "Diagonal", "RtL", X)
+	WinTest(t, "Diagonal", "RtL", O)
 }
 
 func TestForRowWins(t *testing.T) {
-	WinTest(t, "Row", "1", Player1)
-	WinTest(t, "Row", "1", Player2)
-	WinTest(t, "Row", "2", Player1)
-	WinTest(t, "Row", "2", Player2)
-	WinTest(t, "Row", "3", Player1)
-	WinTest(t, "Row", "3", Player2)
+	WinTest(t, "Row", "1", X)
+	WinTest(t, "Row", "1", O)
+	WinTest(t, "Row", "2", X)
+	WinTest(t, "Row", "2", O)
+	WinTest(t, "Row", "3", X)
+	WinTest(t, "Row", "3", O)
 }
 
 func TestForColumnWins(t *testing.T) {
-	WinTest(t, "Column", "1", Player1)
-	WinTest(t, "Column", "1", Player2)
-	WinTest(t, "Column", "2", Player1)
-	WinTest(t, "Column", "2", Player2)
-	WinTest(t, "Column", "3", Player1)
-	WinTest(t, "Column", "3", Player2)
+	WinTest(t, "Column", "1", X)
+	WinTest(t, "Column", "1", O)
+	WinTest(t, "Column", "2", X)
+	WinTest(t, "Column", "2", O)
+	WinTest(t, "Column", "3", X)
+	WinTest(t, "Column", "3", O)
 }
 
 func WinTest(t *testing.T, howWon string, area string, winningPlayer Piece) {
@@ -121,7 +121,7 @@ func (b *Board) PlacePieces(piece Piece, moves ...int) {
 	for i := 0; i < len(*b); i++ {
 		for _, m := range moves {
 			if i == m {
-				b.Mark(m,piece)
+				b.Mark(m, piece)
 			}
 		}
 	}
@@ -129,8 +129,8 @@ func (b *Board) PlacePieces(piece Piece, moves ...int) {
 
 func DrawnBoard() Board {
 	return Board{
-		Player1, Player1, Player2,
-		Player2, Player2, Player1,
-		Player1, Player1, Player2,
+		X, X, O,
+		O, O, X,
+		X, X, O,
 	}
 }

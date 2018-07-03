@@ -14,7 +14,7 @@ type Board []Piece
 type Game struct {
 	Board         Board
 	CurrentPlayer Player
-	Waiting 	  Player
+	Waiting       Player
 	Winner        Piece
 	Players       [2]Player
 	Display       *Console
@@ -139,5 +139,3 @@ func (game *Game) turn() *Game {
 func over(game *Game) bool {
 	return game.Winner != NoOne || game.boardFull()
 }
-
-

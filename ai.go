@@ -1,45 +1,46 @@
 package ttt
 
-import (
-	"fmt"
-	"log"
-)
-
 type Minimax struct {
-	min Piece
-	max Piece
-	tree []Node
+	caller Piece
+	min    Piece
+	max    Piece
+	tree   []Node
 }
 
 type Node struct {
-	pos int
+	pos   int
 	score int
 }
 
-func (mm *Minimax) SetMaxMin( max Piece, min Piece ) {
-	mm.max = max
-	mm.min = min
+func (mm *Minimax) SetCaller(comp Hard) {
+	mm.caller = comp.Piece
 }
 
-func (mm *Minimax) Score(board Board, max Piece, min Piece) int {
-	var winner = board.wonBy()
+func (mm *Minimax) Score(board Board) int {
+
+	var winner= board.wonBy()
+	//log.Printf("Which was a win, making the WINNER %v\n", winner)
 	switch winner {
-	case max:
+	case mm.caller:
+		//log.Printf("Me SO I GAVE 10")
 		return 10
-	case min:
-		return -10
-	default:
+	case NoOne:
+		//log.Printf("NOONE SO I GAVE 0")
 		return 0
+	default:
+		//log.Printf("CALLER SO I GAVE 10")
+		return -10
 	}
 }
 
 func (mm *Minimax) minimax(newBoard Board, players [2]Player) int {
-	mm.SetMaxMin(players[0].GetPiece(), players[1].GetPiece())
+	mm.min = players[0].GetPiece()
+	mm.max = players[1].GetPiece()
 
 	openings := newBoard.blanks()
 
-	if len(openings) == 0 {
-		return mm.Score(newBoard, mm.max, mm.min)
+	if len(openings) == 0 || newBoard.wonBy() != NoOne {
+		return mm.Score(newBoard)
 	}
 	mm.tree = []Node{}
 
@@ -48,7 +49,7 @@ func (mm *Minimax) minimax(newBoard Board, players [2]Player) int {
 		move.pos = emptySpot
 
 		newBoard[emptySpot] = mm.max
-		fmt.Printf("Places max of %v in %v and board becomes %v\n", mm.max,emptySpot, newBoard)
+		//fmt.Printf("Places max of %v in %v and board becomes %v\n", mm.max, emptySpot, newBoard)
 		var nextPlayers = swapPlayers(players)
 		var result = mm.minimax(newBoard[:], nextPlayers)
 
@@ -61,10 +62,10 @@ func (mm *Minimax) minimax(newBoard Board, players [2]Player) int {
 	return mm.evaluate(mm.tree, mm.max)
 }
 
-func (mm *Minimax) evaluate(nodes []Node, max Piece) int {
+func (mm *Minimax) evaluate(nodes []Node, evaluator Piece) int {
 	var bestMove int
-	if max == mm.max {
-		var bestScore = -10000
+	if evaluator == mm.caller {
+		bestScore := -10000
 
 		for index, node := range nodes {
 			if node.score > bestScore {
@@ -73,7 +74,7 @@ func (mm *Minimax) evaluate(nodes []Node, max Piece) int {
 			}
 		}
 	} else {
-		var bestScore = 10000
+		bestScore := 10000
 
 		for index, node := range nodes {
 			if node.score < bestScore {
@@ -82,8 +83,7 @@ func (mm *Minimax) evaluate(nodes []Node, max Piece) int {
 			}
 		}
 	}
-	log.Println(nodes)
-	return nodes[bestMove].pos;
+	return nodes[bestMove].pos
 }
 
 func swapPlayers(players [2]Player) [2]Player {
