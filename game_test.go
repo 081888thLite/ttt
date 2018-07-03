@@ -84,18 +84,28 @@ func TestBoardFull(t *testing.T) {
 func TestGame_setPlayers(t *testing.T) {
 	game := DefaultNewGame()
 	game = game.setPlayers(&Easy{"S", &StubClient{}}, &Easy{"P", &StubClient{}})
-	player1Piece := game.Players[0].GetPiece()
-	player2Piece := game.Players[1].GetPiece()
-	if player1Piece != "S" && player2Piece != "P" {
-		t.Errorf("Expected player pieces to be set to:\n'S' & 'P'\n got: \n%v & %v ", player1Piece, player2Piece)
+	player1piece := game.Players[0].GetPiece()
+	player2piece := game.Players[1].GetPiece()
+	if player1piece != "S" && player2piece != "P" {
+		t.Errorf("Expected player pieces to be set to:\n'S' & 'P'\n got: \n%v & %v ", player1piece, player2piece)
 
+	}
+	game = DefaultNewGame()
+	game.setPlayers(&Easy{"S", &StubClient{}}, &Easy{"P", &StubClient{}})
+	hard1piece := game.Players[0].GetPiece()
+	hard2piece := game.Players[1].GetPiece()
+	if hard1piece != "S" && hard2piece != "P" {
+		t.Error("Expected Hard vs. Hard to work, and GetPiece to be callable")
 	}
 }
 
 func TestGame_Play(t *testing.T) {
-	p1 := &Easy{}
-	p2 := &Easy{}
-	players := [2]Player{p1, p2}
+	e1 := &Easy{}
+	e2 := &Easy{}
+	h1 := &Hard{}
+	h2 := &Hard{}
+	ePlayers := [2]Player{e1, e2}
+	hPlayers := [2]Player{h1, h2}
 	type fields struct {
 		Board         Board
 		CurrentPlayer Player
@@ -107,11 +117,19 @@ func TestGame_Play(t *testing.T) {
 		fields fields
 	}{
 		{
-			name: "Play runs ok",
+			name: "Play runs ok w/ 2 easy players",
 			fields: fields{
 				Board:         FullBoard(),
-				CurrentPlayer: p1,
-				Players:       players,
+				CurrentPlayer: e1,
+				Players:       ePlayers,
+				Winner:        NoOne,
+			},
+		}, {
+			name: "Play runs ok w/ 2 hard players",
+			fields: fields{
+				Board:         FullBoard(),
+				CurrentPlayer: h1,
+				Players:       hPlayers,
 				Winner:        NoOne,
 			},
 		},
@@ -140,19 +158,19 @@ func TestGame_turn(t *testing.T) {
 		name string
 		args args
 	}{
-		{name: "Easy computer", args: args{NewBoard(9), &Easy{Piece: "X"}, 0}},
+		{name: "Easy computer", args: args{NewBoard(9), &Easy{piece: "X"}, 0}},
 		{name: "Easy computer",
-			args: args{Board{"X", Blank, Blank, Blank, Blank, Blank, Blank, Blank, Blank}, &Easy{Piece: "O"}, 1}},
+			args: args{Board{"X", Blank, Blank, Blank, Blank, Blank, Blank, Blank, Blank}, &Easy{piece: "O"}, 1}},
 		{name: "Easy computer",
-			args: args{Board{"X", "O", Blank, Blank, Blank, Blank, Blank, Blank, Blank}, &Easy{Piece: "X"}, 2}},
+			args: args{Board{"X", "O", Blank, Blank, Blank, Blank, Blank, Blank, Blank}, &Easy{piece: "X"}, 2}},
 		{name: "Easy computer",
-			args: args{Board{"X", "O", Blank, "X", Blank, Blank, Blank, Blank, Blank}, &Easy{Piece: "O"}, 2}},
+			args: args{Board{"X", "O", Blank, "X", Blank, Blank, Blank, Blank, Blank}, &Easy{piece: "O"}, 2}},
 		//{name: "Medium computer",
-		//	args: args{Board{"X", "O", Blank, "X", "O", Blank, Blank, Blank, Blank}, &Medium{Piece: "X"}, 6}},
+		//	args: args{Board{"X", "O", Blank, "X", "O", Blank, Blank, Blank, Blank}, &Medium{piece: "X"}, 6}},
 		//{name: "Medium computer",
-		//	args: args{Board{"X", "O", Blank, "X", "O", Blank, Blank, Blank, Blank}, &Medium{Piece: "O"}, 7}},
+		//	args: args{Board{"X", "O", Blank, "X", "O", Blank, Blank, Blank, Blank}, &Medium{piece: "O"}, 7}},
 		//{name: "Medium computer",
-		//	args: args{Board{"X", "O", Blank, Blank, "O", Blank, Blank, Blank, Blank}, &Medium{Piece: "X"}, 2}},
+		//	args: args{Board{"X", "O", Blank, Blank, "O", Blank, Blank, Blank, Blank}, &Medium{piece: "X"}, 2}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

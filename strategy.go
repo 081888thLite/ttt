@@ -2,63 +2,74 @@ package ttt
 
 type Piece string
 
-type Player interface {
-	GetMove(board Board, opp Player) int
-	GetPiece() Piece
-}
-
 type Easy struct {
-	Piece  Piece
+	piece  Piece
 	Client Client
 }
 
-func (comp *Easy) GetPiece() Piece {
-	return comp.Piece
+func (e *Easy) GetPiece() Piece {
+	return e.piece
 }
 
-func (comp *Easy) GetMove(board Board, opp Player) int {
-	return board.blanks()[0]
+func (e *Easy) GetMove(b Board, opp Player) int {
+	return b.blanks()[0]
 }
 
 type Medium struct {
-	Piece  Piece
+	piece  Piece
 	Client Client
 }
 
-func (comp *Medium) GetPiece() Piece {
-	return comp.Piece
+func (m *Medium) GetPiece() Piece {
+	return m.piece
 }
 
-func (comp *Medium) GetMove(board Board, opp Player) int {
-	return board.blanks()[3]
+func (m *Medium) GetMove(b Board, opp Player) int {
+	return b.blanks()[3]
 }
 
 type Hard struct {
-	Piece  Piece
+	piece  Piece
 	Client Client
 }
 
-func (comp *Hard) GetPiece() Piece {
-	return comp.Piece
+func (h *Hard) GetPiece() Piece {
+	return h.piece
 }
 
-func (comp *Hard) GetMove(board Board, opp Player) int {
+func (h *Hard) GetMove(b Board, opp Player) int {
 	mm := new(Minimax)
-	mm.SetCaller(*comp)
-	choice := mm.minimax(board, [2]Player{comp, opp})
-	return choice
+	mm.SetCaller(h)
+	if len(b.blanks()) == len(b) {
+		opp = &Easy{piece: O}
+	}
+	pSet := &[2]Player{h, opp}
+	mv := mm.minimax(b, pSet)
+	return mv
 }
 
 type Human struct {
-	Piece  Piece
+	piece  Piece
 	Client Client
 }
 
-func (human *Human) GetPiece() Piece {
-	return human.Piece
+func (hu *Human) GetPiece() Piece {
+	return hu.piece
 }
 
-func (human *Human) GetMove(board Board, opp Player) int {
-	ui := &Console{}
-	return ui.getHumanMove()
+func (hu *Human) GetMove(b Board, opp Player) int {
+	c := &Console{}
+	mv, err := c.getHumanMove()
+	open := b.blanks()
+	var valid bool
+	for _, e := range open {
+		if mv == e {
+			valid = true
+		}
+	}
+	if mv > len(b) - 1 || mv < 0 || err != nil || !valid {
+		c.Write(MoveError)
+		mv = hu.GetMove(b, opp)
+	}
+	return mv
 }

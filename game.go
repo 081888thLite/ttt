@@ -11,6 +11,11 @@ var WinConditions = [][]int{{0, 1, 2}, {3, 4, 5}, {6, 7, 8}, {0, 3, 6}, {1, 4, 7
 type BoardSize int
 type Board []Piece
 
+type Player interface {
+	GetMove(b Board, opp Player) int
+	GetPiece() Piece
+}
+
 type Game struct {
 	Board         Board
 	CurrentPlayer Player

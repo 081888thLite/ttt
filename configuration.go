@@ -9,9 +9,6 @@ const (
 
 var DefaultPlayers = [2]Player{&Human{"X", &Sys{}}, &Hard{"O", &StubClient{}}}
 
-//Todo:
-//var DefaultPlayers = [2]Player{&Human{"X", &Sys{}}, &Hard{"O", &StubClient{}}}
-
 type Configuration struct {
 	View    *Console
 	Players [2]Player

@@ -6,8 +6,7 @@ import (
 	"strings"
 )
 
-const MoveError = `The move you picked: %v,\nWas out of this world! Literally!\n Try again, and GO for a number
-that correlates to the open positions on the board.`
+const MoveError = "WHOOPS! The move you picked was out of this world! Try again. GO for a number in range."
 
 type View interface {
 	ofBoard(Board) string
@@ -47,11 +46,6 @@ func (display *Console) Board(board Board) {
 	display.Write(printableBoard)
 }
 
-func (display *Console) ofPrompt(Player) string         { return "" }
-func (display *Console) ofMove(string) string           { return "" }
-func (display *Console) ofWinner(Game) string           { return "" }
-func (display *Console) ofDraw() string                 { return "" }
-func (display *Console) ofPlayerThinking(Player) string { return "" }
 func (display *Console) greeting() {
 	display.Write("\nWELCOME TO TICTACTOE\nwrote in Go")
 }
@@ -115,10 +109,11 @@ func (display *Console) WantsSetup() bool {
 func NewConsole() *Console {
 	return &Console{UI: Sys{}}
 }
-func (display *Console) getHumanMove() int {
+
+func (display *Console) getHumanMove() (int, error) {
 	display.Write("To make a move, enter a number corresponding\n")
 	display.Write("to an open board position and press 'return':\n")
 	display.UI.Read()
-	choice, _ := strconv.Atoi(display.UI.GetLastRead())
-	return choice
+	choice, err := strconv.Atoi(display.UI.GetLastRead())
+	return choice, err
 }

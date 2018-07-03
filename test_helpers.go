@@ -7,7 +7,7 @@ import (
 const X, O = "X", "O"
 
 func DefaultNewGame() *Game {
-	players := [2]Player{&Human{Piece: "X", Client: &Sys{}}, &Human{Piece: "O", Client: &Sys{}}}
+	players := [2]Player{&Human{piece: "X", Client: &Sys{}}, &Human{piece: "O", Client: &Sys{}}}
 	c := Configuration{Players: players}
 	return NewGame(c)
 }
