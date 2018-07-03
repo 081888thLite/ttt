@@ -11,18 +11,10 @@ var WinConditions = [][]int{{0, 1, 2}, {3, 4, 5}, {6, 7, 8}, {0, 3, 6}, {1, 4, 7
 type BoardSize int
 type Board []Piece
 
-//Types related to Players
-type Piece string
-
-//Core Types
-type Player interface {
-	GetMove(board Board) int
-	GetPiece() Piece
-}
-
 type Game struct {
 	Board         Board
 	CurrentPlayer Player
+	Waiting 	  Player
 	Winner        Piece
 	Players       [2]Player
 	Display       *Console
@@ -56,8 +48,10 @@ func (game *Game) setPlayers(player1 Player, player2 Player) *Game {
 func (game *Game) switchPlayers() *Game {
 	if game.CurrentPlayer == game.Players[0] {
 		game.CurrentPlayer = game.Players[1]
+		game.Waiting = game.Players[0]
 	} else {
 		game.CurrentPlayer = game.Players[0]
+		game.Waiting = game.Players[1]
 	}
 	return game
 }
@@ -70,7 +64,7 @@ func (board Board) Mark(position int, piece Piece) Board {
 }
 
 func (game *Game) mark(position int) *Game {
-	game.Board = game.Board.Mark(position, game.CurrentPlayer.GetPiece())
+	game.Board.Mark(position, game.CurrentPlayer.GetPiece())
 	return game
 }
 
@@ -118,7 +112,7 @@ func (game *Game) boardFull() bool {
 func (game *Game) Play() {
 	game.Display.greeting()
 	for !over(game) {
-		game = game.turn()
+		game.turn()
 	}
 	switch {
 	case game.Winner != NoOne:
@@ -136,7 +130,7 @@ func (game *Game) Play() {
 
 func (game *Game) turn() *Game {
 	game.Display.Board(game.Board)
-	game.mark(game.CurrentPlayer.GetMove(game.Board))
+	game.mark(game.CurrentPlayer.GetMove(game.Board, game.Waiting))
 	game.CheckForWin()
 	game.switchPlayers()
 	return game
@@ -145,3 +139,5 @@ func (game *Game) turn() *Game {
 func over(game *Game) bool {
 	return game.Winner != NoOne || game.boardFull()
 }
+
+

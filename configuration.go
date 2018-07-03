@@ -7,7 +7,7 @@ const (
 	HARD
 )
 
-var DefaultPlayers = [2]Player{&Human{"X", &Sys{}}, &Medium{"O", &StubClient{}}}
+var DefaultPlayers = [2]Player{&Human{"X", &Sys{}}, &Medium{"O",&Sys{}}}
 
 //Todo:
 //var DefaultPlayers = [2]Player{&Human{"X", &Sys{}}, &Hard{"O", &StubClient{}}}
@@ -18,15 +18,15 @@ type Configuration struct {
 }
 type Strategy int
 
-func (strategy Strategy) getPlayer(piece Piece) Player {
+func (strategy Strategy) create(piece Piece) *Player {
 	players := [...]Player{
-		&Human{Piece: piece},
-		&Easy{Piece: piece},
-		&Medium{Piece: piece},
-		&Hard{Piece: piece},
+		&Human{piece, &Sys{}},
+		&Easy{piece, &StubClient{}},
+		&Medium{piece,&StubClient{}},
+		&Hard{piece, &StubClient{}},
 	}
 	player := players[strategy-1]
-	return player
+	return &player
 }
 
 func Configure() *Configuration {
@@ -37,7 +37,7 @@ func Configure() *Configuration {
 	if v.WantsSetup() {
 		for i, _ := range setPlayers {
 			strategy, piece := v.PlayerMenu(i)
-			setPlayers[i] = strategy.getPlayer(piece)
+			setPlayers[i] = *strategy.create(piece)
 		}
 	} else {
 		setPlayers = DefaultPlayers

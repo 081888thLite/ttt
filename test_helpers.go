@@ -61,7 +61,7 @@ func WinTest(t *testing.T, howWon string, area string, winningPlayer Piece) {
 	}
 }
 
-func (game *Game) setUpWinningBoard(howWon string, area string, winningPlayer Piece) {
+func (game *Game) setUpWinningBoard(howWon string, area string, winningPlayer Piece) *Game {
 	switch howWon {
 	case "Diagonal":
 		switch area {
@@ -96,5 +96,41 @@ func (game *Game) setUpWinningBoard(howWon string, area string, winningPlayer Pi
 			game.Board =
 				[]Piece{Blank, Blank, winningPlayer, Blank, Blank, winningPlayer, Blank, Blank, winningPlayer}
 		}
+	}
+	return game
+}
+func LogIncrementingCheckmateTest(t *testing.T, i int) {
+	t.Log(
+		"Testing Hard takes checkmate move for incrementing win condition:",
+		WinConditions[i][0], WinConditions[i][1], WinConditions[i][2],
+	)
+}
+func LogCenterCellCheckmateTest(t *testing.T, i int) {
+	t.Logf(
+		"Testing Hard takes checkmate move for center cell: %v, when %v %v filled.",
+		WinConditions[i][1], WinConditions[i][2], WinConditions[i][0],
+	)
+}
+func LogDecrementingCheckmateTest(t *testing.T, i int) {
+	t.Log(
+		"Testing Hard takes checkmate move for decrementing win conditions:",
+		WinConditions[i][2], WinConditions[i][1], WinConditions[i][0],
+	)
+}
+func (b *Board) PlacePieces(piece Piece, moves ...int) {
+	for i := 0; i < len(*b); i++ {
+		for _, m := range moves {
+			if i == m {
+				b.Mark(m,piece)
+			}
+		}
+	}
+}
+
+func DrawnBoard() Board {
+	return Board{
+		Player1, Player1, Player2,
+		Player2, Player2, Player1,
+		Player1, Player1, Player2,
 	}
 }
