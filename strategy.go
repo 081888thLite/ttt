@@ -38,14 +38,28 @@ func (h *Hard) GetPiece() Piece {
 }
 
 func (h *Hard) GetMove(b Board, opp Player) int {
+	for i := 0; i < 8; i++ {
+		if b[WinConditions[i][0]] == b[WinConditions[i][1]] &&
+			b[WinConditions[i][0]] != Blank &&
+			b[WinConditions[i][2]] == Blank {
+			return WinConditions[i][2]
+		} else if b[WinConditions[i][1]] == b[WinConditions[i][2]] &&
+			b[WinConditions[i][1]] != Blank &&
+			b[WinConditions[i][0]] == Blank {
+			return WinConditions[i][0]
+		} else if b[WinConditions[i][0]] == b[WinConditions[i][2]] &&
+			b[WinConditions[i][0]] != Blank &&
+			b[WinConditions[i][1]] == Blank {
+			return WinConditions[i][1]
+		}
+	}
 	mm := new(Minimax)
 	mm.SetCaller(h)
 	if len(b.blanks()) == len(b) {
 		opp = &Easy{piece: O}
 	}
 	pSet := &[2]Player{h, opp}
-	mv := mm.minimax(b, pSet)
-	return mv
+	return mm.minimax(b, pSet)
 }
 
 type Human struct {
@@ -67,7 +81,7 @@ func (hu *Human) GetMove(b Board, opp Player) int {
 			valid = true
 		}
 	}
-	if mv > len(b) - 1 || mv < 0 || err != nil || !valid {
+	if mv > len(b)-1 || mv < 0 || err != nil || !valid {
 		c.Write(MoveError)
 		mv = hu.GetMove(b, opp)
 	}
