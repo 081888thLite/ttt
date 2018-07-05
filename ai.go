@@ -1,86 +1,71 @@
 package ttt
 
 type Minimax struct {
-	caller Piece
+	depth  int
 	min    Piece
 	max    Piece
-	tree   []Node
+	scores []int
+	moves  []int
 }
 
-type Node struct {
-	pos   int
-	score int
-}
-
-func (mm *Minimax) SetCaller(comp *Hard) {
-	mm.caller = comp.GetPiece()
-}
-
-func (mm *Minimax) Score(board Board) int {
-
-	var winner = board.wonBy()
-	switch winner {
-	case mm.caller:
-		return 10
-	case NoOne:
-		return 0
+func (mm *Minimax) Score(w Piece, p Piece, depth int) int {
+	switch w {
+	case p:
+		return 10 - depth
+	case swap(p):
+		return depth - 10
 	default:
-		return -10
+		return 0
 	}
 }
 
-func (mm *Minimax) minimax(newBoard Board, players *[2]Player) int {
-	blank := newBoard.blanks()
-	if len(blank) == 0 || newBoard.wonBy() != NoOne {
-		return mm.Score(newBoard)
+func (mm *Minimax) minimax(b Board, p Piece, depth int) int {
+	blank := b.blanks()
+	if len(blank) == 0 || b.wonBy() != NoOne {
+		return mm.Score(b.wonBy(), p, depth)
 	}
-	mm.max = players[0].GetPiece()
-	mm.min = players[1].GetPiece()
-
-	mm.tree = []Node{}
-
-	for _, emptySpot := range blank {
-		move := Node{}
-		move.pos = emptySpot
-
-		newBoard[emptySpot] = mm.max
-		//fmt.Printf("Places max of %v in %v and board becomes %v\n", mm.max, emptySpot, newBoard)
-		var nextPlayers = swapPlayers(*players)
-		var result = mm.minimax(newBoard[:], &nextPlayers)
-
-		move.score = result
-
-		newBoard[emptySpot] = Blank
-
-		mm.tree = append(mm.tree, move)
+	depth += 1
+	mm.scores = []int{}
+	mm.moves = []int{}
+	for _, move := range blank {
+		nb := b[:]
+		nb.Mark(move, p)
+		np := swap(p)
+		nmm := Minimax{}
+		var result = nmm.minimax(nb, np, depth)
+		mm.scores = append(mm.scores, result)
+		mm.moves = append(mm.moves, move)
 	}
-	return mm.evaluate(mm.tree, mm.max)
+	return mm.evaluate(b, p)
 }
 
-func (mm *Minimax) evaluate(nodes []Node, evaluator Piece) int {
+func (mm *Minimax) evaluate(b Board, evaluator Piece) int {
 	var bestMove int
-	if evaluator == mm.caller {
+	if X == b.wonBy() {
 		bestScore := -10000
 
-		for index, node := range nodes {
-			if node.score > bestScore {
-				bestScore = node.score
-				bestMove = index
+		for index, score := range mm.scores {
+			if score > bestScore {
+				bestScore = score
+				bestMove = mm.moves[index]
 			}
 		}
 	} else {
 		bestScore := 10000
 
-		for index, node := range nodes {
-			if node.score < bestScore {
-				bestScore = node.score
-				bestMove = index
+		for index, score := range mm.scores {
+			if score < bestScore {
+				bestScore = score
+				bestMove = mm.moves[index]
 			}
 		}
 	}
-	return nodes[bestMove].pos
+	return bestMove
 }
 
-func swapPlayers(players [2]Player) [2]Player {
-	return [2]Player{players[1], players[0]}
+func swap(p Piece) Piece {
+	if p == X {
+		return O
+	}
+	return X
 }

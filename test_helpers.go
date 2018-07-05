@@ -99,24 +99,7 @@ func (game *Game) setUpWinningBoard(howWon string, area string, winningPlayer Pi
 	}
 	return game
 }
-func LogIncrementingCheckmateTest(t *testing.T, i int) {
-	t.Log(
-		"Testing Hard takes checkmate move for incrementing win condition:",
-		WinConditions[i][0], WinConditions[i][1], WinConditions[i][2],
-	)
-}
-func LogCenterCellCheckmateTest(t *testing.T, i int) {
-	t.Logf(
-		"Testing Hard takes checkmate move for center cell: %v, when %v %v filled.",
-		WinConditions[i][1], WinConditions[i][2], WinConditions[i][0],
-	)
-}
-func LogDecrementingCheckmateTest(t *testing.T, i int) {
-	t.Log(
-		"Testing Hard takes checkmate move for decrementing win conditions:",
-		WinConditions[i][2], WinConditions[i][1], WinConditions[i][0],
-	)
-}
+
 func (b *Board) PlacePieces(piece Piece, moves ...int) {
 	for i := 0; i < len(*b); i++ {
 		for _, m := range moves {
@@ -133,4 +116,27 @@ func DrawnBoard() Board {
 		O, O, X,
 		X, X, O,
 	}
+}
+func placeOppPieces(i int, game *Game) {
+	if anyZeroOrEight(i) {
+		game.Board.PlacePieces("d", 3)
+	} else {
+		if anyZero(i) {
+			game.Board.PlacePieces("d", 8)
+		} else if anyEight(i) {
+			game.Board.PlacePieces("d", 0)
+		}
+	}
+}
+
+func anyZero(i int) bool {
+	return WinConditions[i][0] == 0 || WinConditions[i][1] == 0 || WinConditions[i][2] == 0
+}
+
+func anyEight(i int) bool {
+	return WinConditions[i][0] == 8 || WinConditions[i][1] == 8 || WinConditions[i][2] == 8
+}
+
+func anyZeroOrEight(i int) bool {
+	return anyEight(i) || anyZero(i)
 }

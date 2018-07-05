@@ -74,6 +74,12 @@ func (display *Console) PickPiece(order int) Piece {
 	display.Write(":")
 	display.UI.Read()
 	choice := display.UI.GetLastRead()
+	if choice == X || choice == O {
+		display.Write("Sorry, capital X and O are reserved characters.\n")
+		display.Write("You can use lowercase x or o, if you like.\n")
+		display.Write("Or just pick something different.\n")
+		display.PickPiece(order)
+	}
 	return Piece(choice)
 }
 
@@ -116,4 +122,9 @@ func (display *Console) getHumanMove() (int, error) {
 	display.UI.Read()
 	choice, err := strconv.Atoi(display.UI.GetLastRead())
 	return choice, err
+}
+func (display *Console) CantHaveSamePiece() {
+	display.Write("***ERROR***\n")
+	display.Write("***Players can't have the same pieces.***\n")
+	display.Write("***Pick something different for player 2.***")
 }

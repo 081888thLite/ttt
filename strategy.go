@@ -25,7 +25,12 @@ func (m *Medium) GetPiece() Piece {
 }
 
 func (m *Medium) GetMove(b Board, opp Player) int {
-	return b.blanks()[3]
+	bw := BlockOrWin(b)
+	if bw == -1 {
+		return b.blanks()[0]
+	} else {
+		return bw
+	}
 }
 
 type Hard struct {
@@ -38,33 +43,33 @@ func (h *Hard) GetPiece() Piece {
 }
 
 func (h *Hard) GetMove(b Board, opp Player) int {
-	for i := 0; i < 8; i++ {
-		if b[WinConditions[i][0]] == b[WinConditions[i][1]] &&
-			b[WinConditions[i][0]] != Blank &&
-			b[WinConditions[i][2]] == Blank {
-			return WinConditions[i][2]
-		} else if b[WinConditions[i][1]] == b[WinConditions[i][2]] &&
-			b[WinConditions[i][1]] != Blank &&
-			b[WinConditions[i][0]] == Blank {
-			return WinConditions[i][0]
-		} else if b[WinConditions[i][0]] == b[WinConditions[i][2]] &&
-			b[WinConditions[i][0]] != Blank &&
-			b[WinConditions[i][1]] == Blank {
-			return WinConditions[i][1]
-		}
+	if bw := BlockOrWin(b); bw != -1 {
+		return bw
 	}
 	mm := new(Minimax)
-	mm.SetCaller(h)
-	if len(b.blanks()) == len(b) {
-		opp = &Easy{piece: O}
+	nb := h.ReplaceBoard(b)[:]
+	mv := mm.minimax(nb, X, 0)
+	return mv
+}
+
+func (h *Hard) ReplaceBoard(b Board) Board {
+	nb := NewBoard(9)
+	for i, e := range b {
+		if e == h.piece {
+			nb[i] = X
+		} else if e == Blank {
+			nb[i] = NoOne
+		} else {
+			nb[i] = O
+		}
 	}
-	pSet := &[2]Player{h, opp}
-	return mm.minimax(b, pSet)
+	return nb
 }
 
 type Human struct {
-	piece  Piece
-	Client Client
+	piece   Piece
+	Client  Client
+	console Console
 }
 
 func (hu *Human) GetPiece() Piece {
@@ -72,8 +77,7 @@ func (hu *Human) GetPiece() Piece {
 }
 
 func (hu *Human) GetMove(b Board, opp Player) int {
-	c := &Console{}
-	mv, err := c.getHumanMove()
+	mv, err := hu.console.getHumanMove()
 	open := b.blanks()
 	var valid bool
 	for _, e := range open {
@@ -82,8 +86,27 @@ func (hu *Human) GetMove(b Board, opp Player) int {
 		}
 	}
 	if mv > len(b)-1 || mv < 0 || err != nil || !valid {
-		c.Write(MoveError)
+		hu.console.Write(MoveError)
 		mv = hu.GetMove(b, opp)
 	}
 	return mv
+}
+
+func BlockOrWin(b Board) int {
+	for i := 0; i < 8; i++ {
+		if b[WinConditions[i][0]] == b[WinConditions[i][1]] &&
+			b[WinConditions[i][0]] != NoOne &&
+			b[WinConditions[i][2]] == Blank {
+			return WinConditions[i][2]
+		} else if b[WinConditions[i][1]] == b[WinConditions[i][2]] &&
+			b[WinConditions[i][1]] != NoOne &&
+			b[WinConditions[i][0]] == Blank {
+			return WinConditions[i][0]
+		} else if b[WinConditions[i][0]] == b[WinConditions[i][2]] &&
+			b[WinConditions[i][0]] != NoOne &&
+			b[WinConditions[i][1]] == Blank {
+			return WinConditions[i][1]
+		}
+	}
+	return -1
 }
