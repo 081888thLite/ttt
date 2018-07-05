@@ -3,15 +3,23 @@
 
 ## Tic Tac Toe Game Written in Go
 
-# If you wish to run this package, you'll first need to [DOWNLOAD](https://golang.org/dl/) and [INSTALL](https://golang.org/doc/install) Go.
+## To Play the game:
+### If you wish to run this package, you'll first need to [DOWNLOAD](https://golang.org/dl/) and [INSTALL](https://golang.org/doc/install) Go.
+1. **Change directories into your $GOPATH...**</br>
+`cd $GOPATH`</br>
+if that doesn't work you need to check that you have go properly installed and the $GOPATH set...</br>
+2. **Go get the game by running...**</br>
+`go get github.com/081888thLite`</br>
+3. **Change directories into the ttt root by running...**</br>
+`cd go/src/github.com/081888thLite/ttt`</br>
+4. **Build the application by running...**</br>
+`go install .`</br>
+5. **Play the game by running...**</br>
+`go run ./cmd/play-ttt/main.go`</br>
 
-
-# The simplest way to start playing after installing Go is to run the following commands...
-
-1. `git clone https://www.github.com/081888thLite/ttt`
-2. `cd ttt`
-3. `go run ./cmd/play-ttt/main.go`
-
-# You can then run the test from the same directory w/ the following command:
-
+### You can then run the test from the same directory w/ the following command:
 1. `go test -v`
+
+###### For a highly detailed html code quality report and overview of this Go package, I strongly recommend using [goreporter](https://github.com/360EntSecGroup-Skylar/goreporter) which can be quickly installed and run w/ the following two commands from the same directory (~/go/src/github.com/081888thLite/ttt)...
+1. `go get -u github.com/360EntSecGroup-Skylar/goreporter`
+2. `goreporter -p .`
