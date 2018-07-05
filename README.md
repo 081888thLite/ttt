@@ -9,7 +9,7 @@
 `cd $GOPATH`</br>
 if that doesn't work you need to check that you have go properly installed and the $GOPATH set...</br>
 2. **Go get the game by running...**</br>
-`go get github.com/081888thLite`</br>
+`go get github.com/081888thLite/ttt`</br>
 3. **Change directories into the ttt root by running...**</br>
 `cd go/src/github.com/081888thLite/ttt`</br>
 4. **Build the application by running...**</br>
