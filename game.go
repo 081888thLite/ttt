@@ -119,6 +119,10 @@ func (game *Game) Play() {
 	for !over(game) {
 		game.turn()
 	}
+	congratulateWinner(game)
+}
+
+func congratulateWinner(game *Game) {
 	switch {
 	case game.Winner != NoOne:
 		game.Display.Write("Game Won By:\n")

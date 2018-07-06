@@ -158,33 +158,24 @@ func TestGame_turn(t *testing.T) {
 		name string
 		args args
 	}{
-		{name: "Easy computer", args: args{NewBoard(9), &Easy{piece: "X"}, 0}},
+		{name: "Easy computer", args: args{NewBoard(9), &Easy{piece: X, Client: &StubClient{}}, 0}},
 		{name: "Easy computer",
-			args: args{Board{"X", Blank, Blank, Blank, Blank, Blank, Blank, Blank, Blank}, &Easy{piece: "O"}, 1}},
+			args: args{Board{X, Blank, Blank, Blank, Blank, Blank, Blank, Blank, Blank}, &Easy{piece: O}, 1}},
 		{name: "Easy computer",
-			args: args{Board{"X", "O", Blank, Blank, Blank, Blank, Blank, Blank, Blank}, &Easy{piece: "X"}, 2}},
+			args: args{Board{X, O, Blank, Blank, Blank, Blank, Blank, Blank, Blank}, &Easy{piece: X}, 2}},
 		{name: "Easy computer",
-			args: args{Board{"X", "O", Blank, "X", Blank, Blank, Blank, Blank, Blank}, &Easy{piece: "O"}, 2}},
-		//{name: "Medium computer",
-		//	args: args{Board{"X", "O", Blank, "X", "O", Blank, Blank, Blank, Blank}, &Medium{piece: "X"}, 6}},
-		//{name: "Medium computer",
-		//	args: args{Board{"X", "O", Blank, "X", "O", Blank, Blank, Blank, Blank}, &Medium{piece: "O"}, 7}},
-		//{name: "Medium computer",
-		//	args: args{Board{"X", "O", Blank, Blank, "O", Blank, Blank, Blank, Blank}, &Medium{piece: "X"}, 2}},
+			args: args{Board{X, O, Blank, X, Blank, Blank, Blank, Blank, Blank}, &Easy{piece: O}, 2}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			given := make([]Piece, len(tt.args.givenBoard))
 			copy(given, tt.args.givenBoard)
-			game := &Game{Board: tt.args.givenBoard, CurrentPlayer: tt.args.currentPlayer, Display: NewConsole()}
+			game := &Game{Board: tt.args.givenBoard, CurrentPlayer: tt.args.currentPlayer, Display: &Console{}}
 			game.turn()
 			if game.Board[tt.args.shouldTake] != tt.args.currentPlayer.GetPiece() {
 				e := "\nGiven board:\n %v\n%v player %v\nShould take position:\n%v\nbut board looks like:\n%v\n"
 				t.Fail()
 				t.Errorf(e, given, tt.name, tt.args.currentPlayer, tt.args.shouldTake, game.Board)
-			} else {
-				l := "%v player %v, took: %v\n"
-				t.Logf(l, tt.name, tt.args.currentPlayer, tt.args.shouldTake)
 			}
 		})
 	}

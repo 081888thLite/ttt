@@ -18,6 +18,23 @@ func TestEasy_GetMove(t *testing.T) {
 	}
 }
 
+func TestHard_ReplaceBoard(t *testing.T) {
+	b := NewBoard(9)
+	b.PlacePieces("F", 1, 3, 5)
+	b.PlacePieces("L", 2, 6, 7)
+	h := Hard{piece: "F"}
+	nb := h.ReplaceBoard(b)
+	if nb[1] != X || nb[3] != X || nb[5] != X {
+		t.Errorf("Expected hard player's pieces to be replaced with X")
+	}
+	if nb[2] != O || nb[6] != O || nb[7] != O {
+		t.Errorf("Expected opp of hard player's pieces to be replaced with O")
+	}
+	if nb[8] != NoOne || nb[4] != NoOne || nb[0] != NoOne {
+		t.Errorf("Expected blank spots to remain blank but got: %v, %v, and %v", nb[8], nb[4], nb[0])
+	}
+}
+
 func TestMedium_GetMove(t *testing.T) {
 	for i := 0; i < 7; i++ {
 
@@ -64,28 +81,4 @@ func TestMedium_GetMove(t *testing.T) {
 			t.Log("Passed")
 		}
 	}
-}
-
-func placeOppPieces(i int, game *Game) {
-	if anyZeroOrEight(i) {
-		game.Board.PlacePieces("d", 3)
-	} else {
-		if anyZero(i) {
-			game.Board.PlacePieces("d", 8)
-		} else if anyEight(i) {
-			game.Board.PlacePieces("d", 0)
-		}
-	}
-}
-
-func anyZero(i int) bool {
-	return WinConditions[i][0] == 0 || WinConditions[i][1] == 0 || WinConditions[i][2] == 0
-}
-
-func anyEight(i int) bool {
-	return WinConditions[i][0] == 8 || WinConditions[i][1] == 8 || WinConditions[i][2] == 8
-}
-
-func anyZeroOrEight(i int) bool {
-	return anyEight(i) || anyZero(i)
 }

@@ -126,5 +126,5 @@ func (display *Console) getHumanMove() (int, error) {
 func (display *Console) CantHaveSamePiece() {
 	display.Write("***ERROR***\n")
 	display.Write("***Players can't have the same pieces.***\n")
-	display.Write("***Pick something different for player 2.***\n")
+	display.Write("***Pick something different for player 2.***")
 }
