@@ -5,6 +5,7 @@
 
 ## To Play the game:
 ### If you wish to run this package, you'll first need to [DOWNLOAD](https://golang.org/dl/) and [INSTALL](https://golang.org/doc/install) Go.
+### If you have an older version of Go on your machine (<Go 1.10) you will also need to update your Go version by deleting your Go workspace and then downloading the newest version from the downloads page linked above.
 1. **Change directories into your $GOPATH...**</br>
 `cd $GOPATH`</br>
 if that doesn't work you need to check that you have go properly installed and the $GOPATH set...</br>
