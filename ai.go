@@ -1,62 +1,71 @@
 package ttt
 
 type Minimax struct {
-	depth  int
-	min    Piece
-	max    Piece
-	scores []int
-	moves  []int
+	level    int
+	min      Piece
+	max      Piece
+	tree     []Node
+	bestMove int
 }
 
-func (mm *Minimax) Score(w Piece, p Piece, depth int) int {
-	switch w {
-	case p:
-		return 10 - depth
+type Node struct {
+	pos   int
+	score int
+}
+
+func (mm *Minimax) Score(board Board, l int, p Piece) int {
+	var winner = board.wonBy()
+	switch winner {
+	case X:
+		return 10 - l
 	case swap(p):
-		return depth - 10
+		return l - 10
 	default:
 		return 0
 	}
 }
 
-func (mm *Minimax) minimax(b Board, p Piece, depth int) int {
-	blank := b.blanks()
-	if len(blank) == 0 || b.wonBy() != NoOne {
-		return mm.Score(b.wonBy(), p, depth)
+func (mm *Minimax) minimax(newBoard Board, p Piece, l int) int {
+	blank := newBoard.blanks()
+	if len(blank) == 0 || newBoard.wonBy() != NoOne {
+		return mm.Score(newBoard, l, p)
 	}
-	depth += 1
-	mm.scores = []int{}
-	mm.moves = []int{}
-	for _, move := range blank {
-		nb := b[:]
-		nb.Mark(move, p)
+	l += 1
+	mm.tree = []Node{}
+
+	for _, emptySpot := range blank {
+		move := Node{pos: emptySpot}
+		newBoard[emptySpot] = p
 		np := swap(p)
-		nmm := Minimax{}
-		var result = nmm.minimax(nb, np, depth)
-		mm.scores = append(mm.scores, result)
-		mm.moves = append(mm.moves, move)
+		var result = mm.minimax(newBoard[:], np, l)
+
+		move.score = result
+
+		newBoard[emptySpot] = Blank
+
+		mm.tree = append(mm.tree, move)
 	}
-	return mm.evaluate(b, p)
+	return mm.evaluate(mm.tree, l, p)
 }
 
-func (mm *Minimax) evaluate(b Board, evaluator Piece) int {
+func (mm *Minimax) evaluate(nodes []Node, l int, p Piece) int {
 	var bestMove int
-	if X == b.wonBy() {
-		bestScore := -10000
+	if p == X {
+		bestScore := -100000
 
-		for index, score := range mm.scores {
-			if score > bestScore {
-				bestScore = score
-				bestMove = mm.moves[index]
+		for _, node := range nodes {
+			if node.score > bestScore {
+				bestScore = node.score
+				bestMove = node.pos
 			}
 		}
 	} else {
-		bestScore := 10000
+		bestScore := 100000
 
-		for index, score := range mm.scores {
-			if score < bestScore {
-				bestScore = score
-				bestMove = mm.moves[index]
+		for _, node := range nodes {
+			if node.score < bestScore {
+				bestScore = node.score
+				bestMove = node.pos
 			}
 		}
 	}

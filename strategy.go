@@ -43,13 +43,9 @@ func (h *Hard) GetPiece() Piece {
 }
 
 func (h *Hard) GetMove(b Board, opp Player) int {
-	if bw := BlockOrWin(b); bw != -1 {
-		return bw
-	}
 	mm := new(Minimax)
 	nb := h.ReplaceBoard(b)[:]
-	mv := mm.minimax(nb, X, 0)
-	return mv
+	return mm.minimax(nb, X, 0)
 }
 
 func (h *Hard) ReplaceBoard(b Board) Board {
