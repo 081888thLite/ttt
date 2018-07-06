@@ -1,10 +1,13 @@
 package ttt
 
+import "fmt"
+
 type Minimax struct {
-	caller Piece
-	min    Piece
-	max    Piece
-	tree   []Node
+	level    int
+	min      Piece
+	max      Piece
+	tree     []Node
+	bestMove int
 }
 
 type Node struct {
@@ -12,41 +15,31 @@ type Node struct {
 	score int
 }
 
-func (mm *Minimax) SetCaller(comp *Hard) {
-	mm.caller = comp.GetPiece()
-}
-
-func (mm *Minimax) Score(board Board) int {
-
+func (mm *Minimax) Score(board Board, l int, p Piece) int {
 	var winner = board.wonBy()
 	switch winner {
-	case mm.caller:
-		return 10
-	case NoOne:
-		return 0
+	case X:
+		return 10 - l
+	case swap(p):
+		return l - 10
 	default:
-		return -10
+		return 0
 	}
 }
 
-func (mm *Minimax) minimax(newBoard Board, players *[2]Player) int {
+func (mm *Minimax) minimax(newBoard Board, p Piece, l int) int {
 	blank := newBoard.blanks()
 	if len(blank) == 0 || newBoard.wonBy() != NoOne {
-		return mm.Score(newBoard)
+		return mm.Score(newBoard, l, p)
 	}
-	mm.max = players[0].GetPiece()
-	mm.min = players[1].GetPiece()
-
+	l += 1
 	mm.tree = []Node{}
 
 	for _, emptySpot := range blank {
-		move := Node{}
-		move.pos = emptySpot
-
-		newBoard[emptySpot] = mm.max
-		//fmt.Printf("Places max of %v in %v and board becomes %v\n", mm.max, emptySpot, newBoard)
-		var nextPlayers = swapPlayers(*players)
-		var result = mm.minimax(newBoard[:], &nextPlayers)
+		move := Node{pos: emptySpot}
+		newBoard[emptySpot] = p
+		np := swap(p)
+		var result = mm.minimax(newBoard[:], np, l)
 
 		move.score = result
 
@@ -54,33 +47,42 @@ func (mm *Minimax) minimax(newBoard Board, players *[2]Player) int {
 
 		mm.tree = append(mm.tree, move)
 	}
-	return mm.evaluate(mm.tree, mm.max)
+	return mm.evaluate(mm.tree, l, p)
 }
 
-func (mm *Minimax) evaluate(nodes []Node, evaluator Piece) int {
+func (mm *Minimax) evaluate(nodes []Node, l int, p Piece) int {
+	if l == 0 {
+		fmt.Println(nodes)
+	}
 	var bestMove int
-	if evaluator == mm.caller {
-		bestScore := -10000
+	if p == X {
+		bestScore := -100000
 
-		for index, node := range nodes {
+		for _, node := range nodes {
 			if node.score > bestScore {
 				bestScore = node.score
-				bestMove = index
+				fmt.Println("current best ", node.pos)
+				bestMove = node.pos
 			}
 		}
 	} else {
-		bestScore := 10000
+		bestScore := 100000
 
-		for index, node := range nodes {
+		for _, node := range nodes {
 			if node.score < bestScore {
 				bestScore = node.score
-				bestMove = index
+				bestMove = node.pos
 			}
 		}
 	}
-	return nodes[bestMove].pos
+	fmt.Println(bestMove)
+	fmt.Println("\nin:", nodes)
+	return bestMove
 }
 
-func swapPlayers(players [2]Player) [2]Player {
-	return [2]Player{players[1], players[0]}
+func swap(p Piece) Piece {
+	if p == X {
+		return O
+	}
+	return X
 }
