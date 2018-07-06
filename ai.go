@@ -1,7 +1,5 @@
 package ttt
 
-import "fmt"
-
 type Minimax struct {
 	level    int
 	min      Piece
@@ -51,9 +49,6 @@ func (mm *Minimax) minimax(newBoard Board, p Piece, l int) int {
 }
 
 func (mm *Minimax) evaluate(nodes []Node, l int, p Piece) int {
-	if l == 0 {
-		fmt.Println(nodes)
-	}
 	var bestMove int
 	if p == X {
 		bestScore := -100000
@@ -61,7 +56,6 @@ func (mm *Minimax) evaluate(nodes []Node, l int, p Piece) int {
 		for _, node := range nodes {
 			if node.score > bestScore {
 				bestScore = node.score
-				fmt.Println("current best ", node.pos)
 				bestMove = node.pos
 			}
 		}
@@ -75,8 +69,6 @@ func (mm *Minimax) evaluate(nodes []Node, l int, p Piece) int {
 			}
 		}
 	}
-	fmt.Println(bestMove)
-	fmt.Println("\nin:", nodes)
 	return bestMove
 }
 
